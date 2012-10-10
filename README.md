@@ -10,16 +10,22 @@ Quick start
 
 * Or, clone the repo, `git clone git://github.com/Geczy/WP-Simple-Settings-Framework.git`
 
-Usage
+Installation
 ------------
-```php
-<?php
-add_action( 'init', 'sf_load_settings' );
-function sf_load_settings() {
-	require 'classes/sf-class-settings.php';
-	$settings_framework = new \Geczy\WPSettingsFramework\SF_Settings_API($id = 'my_plugin_name', $title = 'My Plugin Title', $menu = 'plugins.php');
-}
-```
+1. Include the framework in your Wordpress plugin by using:
+
+	```php
+	<?php
+	add_action( 'init', 'sf_load_settings' );
+	function sf_load_settings() {
+		require 'classes/sf-class-settings.php';
+		$settings_framework = new \Geczy\WPSettingsFramework\SF_Settings_API($id = 'my_plugin_name', $title = 'My Plugin Title', $menu = 'plugins.php');
+	}
+	```
+
+	Optionally, you might want to make `$settings_framework` a global variable so that you can use the [helper functions](#helpers).
+
+2. Open `sf-options.php` to begin configuring your options.
 
 Features
 ------------
