@@ -1,4 +1,4 @@
-simple-wordpress-settings-framework
-===================================
+WP Simple Settings Framework
+================================
 
-A simple framework for Wordpress' Settings API
+A minimalistic framework for Wordpress Settings API.
