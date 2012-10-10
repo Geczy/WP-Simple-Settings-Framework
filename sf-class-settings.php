@@ -556,16 +556,11 @@ class SF_Settings_API {
 
 	public function update_option( $name, $value ) {
 		self::$current_options[$name] = $value;
-		update_option( $this->get_id() .'_options', self::$current_options );
+		return update_option( $this->get_id() .'_options', self::$current_options );
 	}
 
 	public function get_option( $name, $default = false ) {
-		$options = self::$current_options;
-
-		if ( isset( $options[$name] ) )
-			return $options[$name];
-
-		return $default;
+		return isset( self::$current_options[$name] ) ? self::$current_options[$name] : $default;
 	}
 
 }
