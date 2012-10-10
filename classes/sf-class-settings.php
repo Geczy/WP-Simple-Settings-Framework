@@ -52,9 +52,7 @@ class SF_Settings_API {
 	public static $current_options = array();
 
 	public function __construct( $id, $title, $menu = 'plugins.php' ) {
-
-		$this->set_assets_url( trailingslashit( plugins_url( 'assets/' , __FILE__ ) ) );
-
+		$this->set_assets_url( trailingslashit( plugins_url( 'assets/' , dirname(__FILE__) ) ) );
 		$this->set_id( $id );
 		$this->set_title( $title );
 		$this->set_menu( $menu );
@@ -230,7 +228,7 @@ class SF_Settings_API {
 
 	private function load_options() {
 		if ( empty( self::$options ) ) {
-			require_once 'sf-options.php';
+			require_once dirname(dirname(__FILE__)) . '/sf-options.php';
 			return $options;
 		}
 
