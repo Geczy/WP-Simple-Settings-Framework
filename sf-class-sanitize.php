@@ -35,11 +35,7 @@ class SF_Sanitize {
 	}
 
 	function geczy_sanitize_checkbox( $input ) {
-		if ( $input ) {
-			$output = '1';
-		} else {
-			$output = '0';
-		}
+		$output = $input ? true : false;
 		return $output;
 	}
 

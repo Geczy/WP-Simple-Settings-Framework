@@ -262,7 +262,7 @@ class SF_Settings_API {
 
 		// Set checkbox to false if it wasn't sent in the $_POST
 		if ( 'checkbox' == $option['type'] && ! isset( $input[$id] ) )
-			$input[$id] = '0';
+			$input[$id] = false;
 
 		// For a value to be submitted to database it must pass through a sanitization filter
 		if ( has_filter( 'geczy_sanitize_' . $option['type'] ) ) {
