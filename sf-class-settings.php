@@ -175,6 +175,7 @@ class SF_Settings_API {
 
 	private function includes() {
 		require_once dirname( __FILE__ ) . '/sf-class-sanitize.php';
+		new SF_Sanitize;
 	}
 
 	private function actions() {
