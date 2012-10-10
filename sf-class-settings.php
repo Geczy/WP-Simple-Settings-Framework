@@ -206,7 +206,7 @@ class SF_Settings_API {
 		add_action( 'admin_print_scripts-' . $page, array( &$this, 'admin_print_scripts' ) );
 	}
 
-	public function parse_options() {
+	private function parse_options() {
 		$options = self::$options;
 
 		foreach ( $options as $option ) {
@@ -228,7 +228,7 @@ class SF_Settings_API {
 		return $tabs;
 	}
 
-	public function load_options() {
+	private function load_options() {
 		if ( empty( self::$options ) ) {
 			require_once 'sf-options.php';
 			return $options;
@@ -275,12 +275,12 @@ class SF_Settings_API {
 		return $clean;
 	}
 
-	function set_defaults() {
+	private function set_defaults() {
 		$options = $this->get_defaults();
 		update_option( $this->get_id() . '_options', $options );
 	}
 
-	function get_defaults() {
+	private function get_defaults() {
 		$output = array();
 		$config = self::$options;
 
@@ -296,7 +296,7 @@ class SF_Settings_API {
 		return $output;
 	}
 
-	function template_body() {
+	private function template_body() {
 
 		$options = self::$options;
 
@@ -331,7 +331,7 @@ class SF_Settings_API {
 
 	}
 
-	function settings_options_format( $value ) {
+	private function settings_options_format( $value ) {
 		if ( empty( $value ) )
 			return false;
 
@@ -501,7 +501,7 @@ class SF_Settings_API {
 
 	}
 
-	function init_settings_page() {
+	public function init_settings_page() {
 
 		$this->template_header();
 		$this->template_body();
@@ -509,7 +509,7 @@ class SF_Settings_API {
 
 	}
 
-	function get_tabs() {
+	private function get_tabs() {
 		$tabs = array();
 		foreach ( self::$options as $option ) {
 
@@ -523,7 +523,7 @@ class SF_Settings_API {
 	}
 
 	// Heading for Navigation
-	function display_tabs() {
+	private function display_tabs() {
 		$tabs = $this->get_tabs();
 		$tabname = !empty ( $_GET['tab'] ) ? $_GET['tab'] : $tabs[0]['slug'];
 		$menu = '';
@@ -536,7 +536,7 @@ class SF_Settings_API {
 		return $menu;
 	}
 
-	function template_header() {
+	private function template_header() {
 ?>
 		<div class="wrap">
 			<?php screen_icon(); ?><h2><?php echo $this->get_title(); ?></h2>
@@ -550,7 +550,7 @@ class SF_Settings_API {
 
 	}
 
-	function template_footer() {
+	private function template_footer() {
 		echo '</div>';
 	}
 
