@@ -53,17 +53,17 @@ class Settings_API {
 
 	public function __construct( $id, $title, $menu = 'plugins.php' ) {
 
-		$this->assets_url = trailingslashit( plugins_url( 'assets/' , __FILE__ ) );
+		$this->set_assets_url( trailingslashit( plugins_url( 'assets/' , __FILE__ ) ) );
 
-		$this->id = $id;
-		$this->title = $title;
-		$this->menu = $menu;
+		$this->set_id( $id );
+		$this->set_title( $title );
+		$this->set_menu( $menu );
 
 		$this->includes();
 		$this->actions();
 
 		self::$options = $this->load_options();
-		self::$current_options = get_option( $this->id . '_options' );
+		self::$current_options = get_option( $this->get_id() . '_options' );
 
 		$this->parse_options();
 
@@ -73,6 +73,105 @@ class Settings_API {
 			$this->set_defaults();
 		}
 	}
+
+	// ==================================================================
+	//
+	// Getters and setters.
+	//
+	// ------------------------------------------------------------------
+
+
+	/**
+	 * Get URL to assets
+	 *
+	 * @return string URL to assets
+	 */
+	public function get_assets_url() {
+	    return $this->assets_url;
+	}
+
+	/**
+	 * Set URL to assets
+	 *
+	 * @param  string $assets_url URL to assets
+	 * @return [class type]    $this
+	 */
+	public function set_assets_url($assets_url) {
+	    $this->assets_url = $assets_url;
+
+	    return $this;
+	}
+
+	/**
+	 * Retrieve ID
+	 *
+	 * @return string ID to use throughout the script
+	 */
+	public function get_id() {
+		return $this->id;
+	}
+
+	/**
+	 * Set ID
+	 *
+	 * @param string  $id ID to use throughout the script
+	 * @return [class type]    $this
+	 */
+	public function set_id( $id ) {
+		$this->id = $id;
+
+		return $this;
+	}
+
+	/**
+	 * Retrieve settings page title
+	 *
+	 * @return string
+	 */
+	public function get_title() {
+		return $this->title;
+	}
+
+	/**
+	 * Set settings page title
+	 *
+	 * @param string  $title [description]
+	 * @return [class type]    $this
+	 */
+	public function set_title( $title ) {
+		$this->title = $title;
+
+		return $this;
+	}
+
+
+	/**
+	 * Retrieve location of settings subpage
+	 *
+	 * @return [type] [description]
+	 */
+	public function get_menu() {
+		return $this->menu;
+	}
+
+	/**
+	 * Set settings menu location
+	 *
+	 * @param string  $menu Menu ID
+	 * @return [class type]    $this
+	 */
+	public function set_menu( $menu ) {
+		$this->menu = $menu;
+
+		return $this;
+	}
+
+	// ==================================================================
+	//
+	// Begin initialization.
+	//
+	// ------------------------------------------------------------------
+
 
 	private function includes() {
 		require_once dirname( __FILE__ ) . '/class-sanitize.php';
@@ -86,23 +185,23 @@ class Settings_API {
 
 	/* Resources required on admin screen. */
 	public function admin_enqueue_scripts() {
-		wp_register_script( 'bootstrap-tooltip' , $this->assets_url . 'js/bootstrap-tooltip.js' ,  array( 'jquery' ), '1.0' );
-		wp_register_script( 'select2' , $this->assets_url . 'js/select2/select2.min.js' ,  array( 'jquery' ), '1.0' );
-		wp_register_style( 'select2' , $this->assets_url . 'js/select2/select2.css' );
+		wp_register_script( 'bootstrap-tooltip' , $this->get_assets_url() . 'js/bootstrap-tooltip.js' ,  array( 'jquery' ), '1.0' );
+		wp_register_script( 'select2' , $this->get_assets_url() . 'js/select2/select2.min.js' ,  array( 'jquery' ), '1.0' );
+		wp_register_style( 'select2' , $this->get_assets_url() . 'js/select2/select2.css' );
 	}
 
 	public function admin_print_scripts() {
-        wp_enqueue_script( 'select2' );
-        wp_enqueue_style( 'select2' );
-        wp_enqueue_script( 'bootstrap-tooltip' );
+		wp_enqueue_script( 'select2' );
+		wp_enqueue_style( 'select2' );
+		wp_enqueue_script( 'bootstrap-tooltip' );
 	}
 
 	public function register_options() {
-		register_setting( $this->id . '_options_nonce', $this->id . '_options', array( &$this, 'validate_options' ) );
+		register_setting( $this->get_id() . '_options_nonce', $this->get_id() . '_options', array( &$this, 'validate_options' ) );
 	}
 
 	public function create_menu() {
-		$page = add_submenu_page( $this->menu, $this->title, $this->title, 'manage_options', $this->id, array( &$this, 'init_settings_page' ) );
+		$page = add_submenu_page( $this->get_menu(), $this->get_title(), $this->get_title(), 'manage_options', $this->get_id(), array( &$this, 'init_settings_page' ) );
 		add_action( 'admin_print_scripts-' . $page, array( &$this, 'admin_print_scripts' ) );
 	}
 
@@ -171,13 +270,13 @@ class Settings_API {
 
 		endforeach;
 
-		add_settings_error( $this->id, 'save_options', __( 'Settings saved.', 'geczy' ), 'updated' );
+		add_settings_error( $this->get_id(), 'save_options', __( 'Settings saved.', 'geczy' ), 'updated' );
 		return $clean;
 	}
 
 	function set_defaults() {
 		$options = $this->get_defaults();
-		update_option( $this->id . '_options', $options );
+		update_option( $this->get_id() . '_options', $options );
 	}
 
 	function get_defaults() {
@@ -206,7 +305,7 @@ class Settings_API {
 ?>
 
 		<form method="post" action="options.php">
-			<?php settings_fields( $this->id . '_options_nonce' ); ?>
+			<?php settings_fields( $this->get_id() . '_options_nonce' ); ?>
 			<table class="form-table">
 
 		<?php
@@ -262,7 +361,7 @@ class Settings_API {
 		$optionVal   = $optionVal !== false && $optionVal !== null ? esc_attr ( $optionVal ) : esc_attr ( $std );
 		$numberType  = $type == 'number' && !empty( $restrict ) && is_array( $restrict ) ? true : false;
 		$title       = $name;
-		$name        = $this->id . "_options[{$id}]";
+		$name        = $this->get_id() . "_options[{$id}]";
 
 		$grouped     = !$title              ? 'style="padding-top:0px;"'                                       : '';
 		$tip         =  $tip               ? '<a href="#" tip="' . $tip . '" class="tips" tabindex="99"></a>' : '';
@@ -287,8 +386,8 @@ class Settings_API {
 		/* Meat & footer of the option. */
 		switch ( $type ) :
 
-	case 'title':
-	?><thead>
+		case 'title':
+			?><thead>
 			<tr>
 				<th scope="col" colspan="2">
 					<h3 class="title"><?php echo $title; ?></h3>
@@ -296,7 +395,7 @@ class Settings_API {
 				</th>
 			</tr>
 		  </thead><?php
-	break;
+		break;
 
 	case 'text'   :
 	case 'number' :
@@ -370,7 +469,7 @@ class Settings_API {
 		  		  >
 
 		<?php foreach ( $options as $key => $val ) : ?>
-					<option value="<?php echo $key; ?>" <?php selected($optionVal, $key, true); ?>>
+					<option value="<?php echo $key; ?>" <?php selected( $optionVal, $key, true ); ?>>
 					<?php echo $val; ?>
 					</option>
 		<?php endforeach; ?>
@@ -430,7 +529,7 @@ class Settings_API {
 
 		foreach ( $tabs as $tab ) {
 			$class = $tabname == $tab['slug'] ? 'nav-tab-active' : '';
-			$menu .= sprintf( '<a id="%s-tab" class="nav-tab %s" title="%s" href="?page=%s&tab=%s">%s</a>', $tab['slug'], $class, $tab['name'], $this->id, $tab['slug'], esc_html( $tab['name'] ) );
+			$menu .= sprintf( '<a id="%s-tab" class="nav-tab %s" title="%s" href="?page=%s&tab=%s">%s</a>', $tab['slug'], $class, $tab['name'], $this->get_id(), $tab['slug'], esc_html( $tab['name'] ) );
 		}
 
 		return $menu;
@@ -439,7 +538,7 @@ class Settings_API {
 	function template_header() {
 ?>
 		<div class="wrap">
-			<?php screen_icon(); ?><h2><?php echo $this->title; ?></h2>
+			<?php screen_icon(); ?><h2><?php echo $this->get_title(); ?></h2>
 
 			<h2 class="nav-tab-wrapper">
 				<?php echo $this->display_tabs(); ?>
@@ -456,7 +555,7 @@ class Settings_API {
 
 	public function update_option( $name, $value ) {
 		self::$current_options[$name] = $value;
-		update_option( $this->id .'_options', self::$current_options );
+		update_option( $this->get_id() .'_options', self::$current_options );
 	}
 
 	public function get_option( $name, $default = false ) {
