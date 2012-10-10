@@ -174,7 +174,7 @@ class Settings_API {
 
 
 	private function includes() {
-		require_once dirname( __FILE__ ) . '/class-sanitize.php';
+		require_once dirname( __FILE__ ) . '/sf-sanitize.php';
 	}
 
 	private function actions() {
@@ -229,7 +229,7 @@ class Settings_API {
 
 	public function load_options() {
 		if ( empty( self::$options ) ) {
-			require_once 'class-options.php';
+			require_once 'sf-options.php';
 			return $options;
 		}
 
