@@ -46,7 +46,7 @@
 
 namespace Geczy\WPSettingsFramework;
 
-class Settings_API {
+class SF_Settings_API {
 
 	public static $options = array();
 	public static $current_options = array();
@@ -174,7 +174,7 @@ class Settings_API {
 
 
 	private function includes() {
-		require_once dirname( __FILE__ ) . '/sf-sanitize.php';
+		require_once dirname( __FILE__ ) . '/sf-class-sanitize.php';
 	}
 
 	private function actions() {
