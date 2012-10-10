@@ -296,28 +296,35 @@ class SF_Settings_API {
 		return $output;
 	}
 
+	private function template_header() {
+?>
+		<div class="wrap">
+			<?php screen_icon(); ?><h2><?php echo $this->get_title(); ?></h2>
+
+			<h2 class="nav-tab-wrapper">
+				<?php echo $this->display_tabs(); ?>
+			</h2><?php
+
+		if ( !empty ( $_REQUEST['settings-updated'] ) )
+			settings_errors();
+
+	}
+
 	private function template_body() {
 
+		if ( empty( self::$options ) ) return false;
+
 		$options = self::$options;
-
-		if ( empty( $options ) )
-			return false;
-
-?>
+		$tabs = $this->get_tabs();
+		$tabname = !empty ( $_GET['tab'] ) ? $_GET['tab'] : $tabs[0]['slug']; ?>
 
 		<form method="post" action="options.php">
 			<?php settings_fields( $this->get_id() . '_options_nonce' ); ?>
 			<table class="form-table">
 
-		<?php
-
-		$tabs = $this->get_tabs();
-		$tabname = !empty ( $_GET['tab'] ) ? $_GET['tab'] : $tabs[0]['slug'];
-
-		foreach ( $this->tabs[$tabname] as $value ) :
-			$this->settings_options_format( $value );
-		endforeach;
-?>
+			<?php foreach ( $this->tabs[$tabname] as $value ) :
+				$this->settings_options_format( $value );
+			endforeach; ?>
 
 			</table>
 
@@ -325,10 +332,12 @@ class SF_Settings_API {
 				<input type="hidden" name="currentTab" value="<?php echo $tabname; ?>">
 				<input type="submit" name="update" class="button-primary" value="<?php _e( sprintf( 'Save %s changes', $this->tab_headers[$tabname] ), 'geczy' ); ?>" />
 			</p>
-		</form>
+		</form> <?php
 
-		<?php
+	}
 
+	private function template_footer() {
+		echo '</div>';
 	}
 
 	private function settings_options_format( $value ) {
@@ -534,24 +543,6 @@ class SF_Settings_API {
 		}
 
 		return $menu;
-	}
-
-	private function template_header() {
-?>
-		<div class="wrap">
-			<?php screen_icon(); ?><h2><?php echo $this->get_title(); ?></h2>
-
-			<h2 class="nav-tab-wrapper">
-				<?php echo $this->display_tabs(); ?>
-			</h2><?php
-
-		if ( !empty ( $_REQUEST['settings-updated'] ) )
-			settings_errors();
-
-	}
-
-	private function template_footer() {
-		echo '</div>';
 	}
 
 	public function update_option( $name, $value ) {
