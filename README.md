@@ -6,12 +6,19 @@ A minimalistic framework for Wordpress Settings API.
 Quick start
 ------------
 
-Clone the repo, `git clone git://github.com/Geczy/WP-Simple-Settings-Framework.git`, or [download the latest release](https://github.com/Geczy/WP-Simple-Settings-Framework/zipball/master).
+* [Download the latest release](https://github.com/Geczy/WP-Simple-Settings-Framework/zipball/master) (zip)
 
+* Or, clone the repo, `git clone git://github.com/Geczy/WP-Simple-Settings-Framework.git`
+
+Usage
+------------
 ```php
 <?php
-require 'sf-class-settings.php';
-$settings_framework = new \Geczy\WPSettingsFramework\SF_Settings_API($this->id, $this->title);
+add_action( 'init', 'sf_load_settings' );
+function sf_load_settings() {
+	require 'classes/sf-class-settings.php';
+	$settings_framework = new \Geczy\WPSettingsFramework\SF_Settings_API($id = 'my_plugin_name', $title = 'My Plugin Title', $menu = 'plugins.php');
+}
 ```
 
 Features
