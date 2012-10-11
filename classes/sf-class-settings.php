@@ -57,6 +57,8 @@ class SF_Settings_API {
 		$this->set_title( $title );
 		$this->set_menu( $menu );
 
+		$this->file = $this->get_main_plugin_file();
+
 		$this->includes();
 		$this->actions();
 
@@ -72,12 +74,40 @@ class SF_Settings_API {
 		}
 	}
 
+	/**
+	 * Return the main plugin that's calling the Jigoshop
+	 * dependencies library.
+	 *
+	 * @access private
+	 *
+	 * @return string File path to the main plugin.
+	 */
+	private function get_main_plugin_file() {
+		$file = debug_backtrace();
+
+		// Three functions is how long it took for
+		// the main plugin to call us. So three we go!
+		$file = $file[2]['file'];
+
+		return $file;
+	}
+
+	// Add a "Settings" link to the plugins.php page
+	public function add_settings_link( $links, $file ) {
+		$this_plugin = plugin_basename( $this->file );
+		$page = strpos($this->get_menu(), '.php') ? $this->get_menu() : 'admin.php';
+		if ( $file == $this_plugin ) {
+			$settings_link = '<a href="'.$page.'?page='.$this->get_id().'">' . __( 'Settings', 'geczy' ) . '</a>';
+			array_unshift( $links, $settings_link );
+		}
+		return $links;
+	}
+
 	// ==================================================================
 	//
 	// Getters and setters.
 	//
 	// ------------------------------------------------------------------
-
 
 	/**
 	 * Get URL to assets
@@ -180,6 +210,7 @@ class SF_Settings_API {
 		add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_scripts' ) );
 		add_action( 'admin_init', array( &$this, 'register_options' ) );
 		add_action( 'admin_menu', array( &$this, 'create_menu' ) );
+		add_filter( 'plugin_action_links', array( &$this, 'add_settings_link' ), 10, 2 );
 	}
 
 	/* Resources required on admin screen. */
