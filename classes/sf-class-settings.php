@@ -186,13 +186,17 @@ class SF_Settings_API {
 	public function admin_enqueue_scripts() {
 		wp_register_script( 'bootstrap-tooltip' , $this->get_assets_url() . 'js/bootstrap-tooltip.js' ,  array( 'jquery' ), '1.0' );
 		wp_register_script( 'select2' , $this->get_assets_url() . 'js/select2/select2.min.js' ,  array( 'jquery' ), '1.0' );
+		wp_register_script( 'sf-scripts' , $this->get_assets_url() . 'js/sf-jquery.js' ,  array( 'jquery' ), '1.0' );
 		wp_register_style( 'select2' , $this->get_assets_url() . 'js/select2/select2.css' );
+		wp_register_style( 'sf-styles' , $this->get_assets_url() . 'css/sf-styles.css' );
 	}
 
 	public function admin_print_scripts() {
-		wp_enqueue_script( 'select2' );
-		wp_enqueue_style( 'select2' );
 		wp_enqueue_script( 'bootstrap-tooltip' );
+		wp_enqueue_script( 'select2' );
+		wp_enqueue_script( 'sf-scripts' );
+		wp_enqueue_style( 'select2' );
+		wp_enqueue_style( 'sf-styles' );
 	}
 
 	public function register_options() {
@@ -372,7 +376,7 @@ class SF_Settings_API {
 		$name        = $this->get_id() . "_options[{$id}]";
 
 		$grouped     = !$title              ? 'style="padding-top:0px;"'                                       : '';
-		$tip         =  $tip               ? '<a href="#" tip="' . $tip . '" class="tips" tabindex="99"></a>' : '';
+		$tip         =  $tip               ? '<a href="#" title="' . $tip . '" class="sf-tips" tabindex="99"></a>' : '';
 		$description =  $desc && !$grouped && !$group && $type != 'checkbox' ? '<br /><small>' . $desc . '</small>'      : '<label for="' . $id . '"> ' .$desc . '</label>';
 		$description =  ( $type == 'title' && !empty( $desc ) ) ? '<p>' . $desc . '</p>' : $description;
 
