@@ -31,7 +31,9 @@ Features
 ------------
 
 ### Automatic settings page
-A settings page will be setup for you automatically based on the options you configure.
+Don't want it under the Plugins tab like in the screenshot? No problem, you can choose where you want it!
+
+You can also change "Simple Settings" submenu to be anything you'd like.
 
 ![settings page example](http://i.imgur.com/aEGUD.png)
 
