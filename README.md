@@ -30,6 +30,34 @@ Installation
 Features
 ------------
 
+### Automatic settings page
+A settings page will be setup for you automatically based on the options you configure.
+
+![settings page example](http://i.imgur.com/aEGUD.png)
+
+---
+
+### Tooltips
+![tooltips example](http://i.imgur.com/Z3Pnk.png)
+
+Optional tooltips using [Twitter Bootstrap](http://twitter.github.com/bootstrap/javascript.html#tooltips)!
+
+---
+
+### Select box replacement
+![select box replacement](http://i.imgur.com/ehQsG.png)
+
+Utilizing [Select2](http://ivaynberg.github.com/select2/) to display select boxes. It's pretty cool!
+
+---
+
+### Multiple tabs
+![multiple tabs example](http://i.imgur.com/uewap.png)
+
+Create multiple tabs for your options.
+
+---
+
 ### Input types
 
 * Text
@@ -40,7 +68,8 @@ Features
 * Select
 * WP Pages
 
-### Helpers
+Helpers
+------------
 
 Update or add a new option
 
