@@ -416,8 +416,8 @@ class SF_Settings_API {
 				 type="<?php echo $type; ?>"
 
 				 <?php if ( $numberType ): ?>
-				 min="<?php echo $restrict['min']; ?>"
-				 max="<?php echo $restrict['max']; ?>"
+				 min="<?php echo !empty($restrict['min']) ? $restrict['min'] : ''; ?>"
+				 max="<?php echo !empty($restrict['max']) ? $restrict['max'] : ''; ?>"
 				 step="<?php echo isset( $restrict['step'] ) ? $restrict['step'] : 'any'; ?>"
 				 <?php endif; ?>
 
