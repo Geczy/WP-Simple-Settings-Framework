@@ -47,7 +47,7 @@ Optional tooltips using [Twitter Bootstrap](http://twitter.github.com/bootstrap/
 ---
 
 ### Select box replacement
-![select box replacement](http://i.imgur.com/ehQsG.png)
+![select box replacement](http://i.imgur.com/ikOXH.png)
 
 Utilizing [Select2](http://ivaynberg.github.com/select2/) to display select boxes. It's pretty cool!
 

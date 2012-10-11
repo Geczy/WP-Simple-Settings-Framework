@@ -32,8 +32,8 @@ $options[] = array(
 	'id'   => 'radio_sample',
 	'type' => 'radio',
 	'options' => array(
-		'id_one' => 'Gorgeous',
-		'id_two' => 'Pretty'
+		'gorgeous' => 'Gorgeous',
+		'pretty' => 'Pretty'
 	)
 );
 
@@ -58,10 +58,10 @@ $options[] = array(
 	'id'   => 'select_sample',
 	'type' => 'select',
 	'options' => array(
-		'id_one' => 'Ten dollars',
-		'id_two' => 'Five dollars',
-		'id_three' => 'Two dollars',
-		'id_four' => 'One dollar',
+		'tenbucks' => 'Ten dollars',
+		'redhead' => 'A readheaded girlfriend',
+		'tofly' => 'Flying powers',
+		'lolwhat' => 'Three hearts',
 	)
 );
 
