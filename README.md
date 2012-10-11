@@ -54,7 +54,7 @@ Utilizing [Select2](http://ivaynberg.github.com/select2/) to display select boxe
 ---
 
 ### Multiple tabs
-![multiple tabs example](http://i.imgur.com/uewap.png)
+![multiple tabs example](http://i.imgur.com/OUM4i.png)
 
 Create multiple tabs for your options.
 
