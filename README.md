@@ -87,6 +87,24 @@ Get an existing option's value
 $settings_framework->get_option('your_option');
 ```
 
+Example configuration
+------------
+
+Check out the [example config](https://github.com/Geczy/WP-Simple-Settings-Framework/blob/master/sf-options.php) for an idea of how to use every input type.
+
+Here's an example of one type, though:
+
+```php
+<?php
+$options[] = array(
+	'name' => __( 'Name', 'geczy' ),
+	'desc' => __( 'Please tell me who you are.', 'geczy' ),
+	'id'   => 'text_sample',
+	'type' => 'text',
+);
+```
+
+
 Bug tracker
 -----------
 
