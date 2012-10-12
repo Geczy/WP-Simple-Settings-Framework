@@ -455,7 +455,7 @@ class SF_Settings_API {
 				 class="regular-text <?php echo $class; ?>"
 				 style="<?php echo $css; ?>"
 				 placeholder="<?php echo $placeholder; ?>"
-				 value="<?php echo $optionVal; ?>"
+				 value="<?php echo $optionVal !== false ? $optionVal : $std; ?>"
 				/>
 		<?php echo $description;
 		break;
@@ -466,7 +466,7 @@ class SF_Settings_API {
 				 type="checkbox"
 				 class="<?php echo $class; ?>"
 				 style="<?php echo $css; ?>"
-				 <?php if ( $optionVal !== false ) echo checked( $optionVal, 1, false ); else if ( $std ) echo checked( $std, 1, false ); ?>
+				 <?php if ( $optionVal !== false ) echo checked( $optionVal, 1, false ); else echo checked( $std, 1, false ); ?>
 				 />
 		<?php echo $description;
 		break;
@@ -479,7 +479,7 @@ class SF_Settings_API {
 						   id="<?php echo $key; ?>"
 						   value="<?php echo $key; ?>"
 						   class="<?php echo $class; ?>"
-							<?php if ( $key == $optionVal ) echo 'checked="checked"'; else if ( empty( $optionVal ) && $std == $key ) echo 'checked="checked"'; ?>
+							<?php if ( $optionVal !== false ) echo checked( $optionVal, $key, false ); else echo checked( $std, $key, false ); ?>
 					/>
 					<?php echo $val; ?>
 					</label><br /><?php
@@ -488,15 +488,14 @@ class SF_Settings_API {
 
 	case 'single_select_page':
 
-		if ( empty( $optionVal ) )
-			$optionVal = $std;
+		$selected = ($optionVal !== false) ? $optionVal : $std
 
 		$args = array(
 			'name'       => $name,
 			'id'         => $id,
 			'sort_order' => 'ASC',
 			'echo'       => 0,
-			'selected'   => $optionVal
+			'selected'   => $selected
 		);
 		echo wp_dropdown_pages( $args );
 		echo $description;
@@ -505,6 +504,8 @@ class SF_Settings_API {
 
 	case 'select':
 
+		$selected = ($optionVal !== false) ? $optionVal : $std;
+
 		?><select id="<?php echo $id; ?>"
 				  class="<?php echo $class; ?>"
 				  style="<?php echo $css; ?>"
@@ -512,7 +513,7 @@ class SF_Settings_API {
 		  		  >
 
 		<?php foreach ( $options as $key => $val ) : ?>
-					<option value="<?php echo $key; ?>" <?php selected( $optionVal, $key, true ); ?>>
+					<option value="<?php echo $key; ?>" <?php selected( $selected, $key, true ); ?>>
 					<?php echo $val; ?>
 					</option>
 		<?php endforeach; ?>
@@ -527,7 +528,7 @@ class SF_Settings_API {
 							style="<?php if ( $css ) echo $css; else echo 'width:300px;'; ?>"
 							placeholder="<?php echo $placeholder; ?>"
 							rows="3"
-				  ><?php if ( $optionVal ) echo $optionVal; else echo $std; ?></textarea>
+				  ><?php echo ($optionVal !== false) ? $optionVal : $std; ?></textarea>
 				<?php echo $description;
 		break;
 
