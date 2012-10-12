@@ -1,7 +1,7 @@
 a.sf-tips {
 	height: 16px;
 	width: 16px;
-	margin: 5px 5px 0 0;
+	margin-top: 0.2em;
 	float: right;
 	background: url(../img/tip.png) no-repeat top left;
 }
