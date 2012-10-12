@@ -488,7 +488,7 @@ class SF_Settings_API {
 
 	case 'single_select_page':
 
-		$selected = ($optionVal !== false) ? $optionVal : $std
+		$selected = ($optionVal !== false) ? $optionVal : $std;
 
 		$args = array(
 			'name'       => $name,
