@@ -295,7 +295,7 @@ class SF_Settings_API {
 
 		// Set checkbox to false if it wasn't sent in the $_POST
 		if ( 'checkbox' == $option['type'] && ! isset( $input[$id] ) )
-			$input[$id] = false;
+			$input[$id] = 0;
 
 		// For a value to be submitted to database it must pass through a sanitization filter
 		if ( has_filter( 'geczy_sanitize_' . $option['type'] ) ) {
@@ -393,7 +393,7 @@ class SF_Settings_API {
 		);
 
 		foreach ( $defaultOptions as $key ) {
-			if ( !is_array( $key ) && empty( $value[$key] ) ) $value[$key] = '';
+			if ( !is_array( $key ) && !isset( $value[$key] ) ) $value[$key] = '';
 			else if ( is_array( $key ) ) foreach ( $key as $val ) $value[$key][$val] = esc_attr( $value[$key][$val] );
 		}
 
@@ -401,14 +401,14 @@ class SF_Settings_API {
 		extract( $value );
 
 		$optionVal   = $this->get_option( $id );
-		$optionVal   = $optionVal !== false && $optionVal !== null ? esc_attr ( $optionVal ) : esc_attr ( $std );
+		$optionVal   = $optionVal !== false ? esc_attr ( $optionVal ) : false;
 		$numberType  = $type == 'number' && !empty( $restrict ) && is_array( $restrict ) ? true : false;
 		$title       = $name;
 		$name        = $this->get_id() . "_options[{$id}]";
 
-		$grouped     = !$title              ? 'style="padding-top:0px;"'                                       : '';
-		$tip         =  $tip               ? '<a href="#" title="' . $tip . '" class="sf-tips" tabindex="99"></a>' : '';
-		$description =  $desc && !$grouped && !$group && $type != 'checkbox' ? '<br /><small>' . $desc . '</small>'      : '<label for="' . $id . '"> ' .$desc . '</label>';
+		$grouped     = !$title ? 'style="padding-top:0px;"' : '';
+		$tip         =  $tip ? '<a href="#" title="' . $tip . '" class="sf-tips" tabindex="99"></a>' : '';
+		$description =  $desc && !$grouped && !$group && $type != 'checkbox' ? '<br /><small>' . $desc . '</small>' : '<label for="' . $id . '"> ' .$desc . '</label>';
 		$description =  ( $type == 'title' && !empty( $desc ) ) ? '<p>' . $desc . '</p>' : $description;
 
 		/* Header of the option. */
@@ -466,7 +466,7 @@ class SF_Settings_API {
 				 type="checkbox"
 				 class="<?php echo $class; ?>"
 				 style="<?php echo $css; ?>"
-				 <?php if ( isset( $optionVal ) ) echo checked( $optionVal, '1', false ); else if ( $std ) echo checked( $std, '1', false ); ?>
+				 <?php if ( $optionVal !== false ) echo checked( $optionVal, 1, false ); else if ( $std ) echo checked( $std, 1, false ); ?>
 				 />
 		<?php echo $description;
 		break;
@@ -527,7 +527,7 @@ class SF_Settings_API {
 							style="<?php if ( $css ) echo $css; else echo 'width:300px;'; ?>"
 							placeholder="<?php echo $placeholder; ?>"
 							rows="3"
-				  ><?php if ( isset( $optionVal ) ) echo $optionVal; else echo $std; ?></textarea>
+				  ><?php if ( $optionVal ) echo $optionVal; else echo $std; ?></textarea>
 				<?php echo $description;
 		break;
 
