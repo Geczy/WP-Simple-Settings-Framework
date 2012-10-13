@@ -364,7 +364,7 @@ class SF_Settings_API {
 
 			<p class="submit">
 				<input type="hidden" name="currentTab" value="<?php echo $tabname; ?>">
-				<input type="submit" name="update" class="button-primary" value="<?php _e( sprintf( 'Save %s changes', $this->tab_headers[$tabname] ), 'geczy' ); ?>" />
+				<input type="submit" name="update" class="button-primary" value="<?php echo sprintf( __( 'Save %s changes', 'geczy' ), $this->tab_headers[$tabname] ); ?>" />
 			</p>
 		</form> <?php
 
