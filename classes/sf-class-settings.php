@@ -410,7 +410,7 @@ class SF_Settings_API {
 		$grouped     = !$title ? 'style="padding-top:0px;"' : '';
 		$tip         =  $tip ? '<a href="#" title="' . $tip . '" class="sf-tips" tabindex="99"></a>' : '';
 		$description =  $desc && !$grouped && !$group && $type != 'checkbox' ? '<br /><small>' . $desc . '</small>' : '<label for="' . $id . '"> ' .$desc . '</label>';
-		$description =  ( $type == 'title' && !empty( $desc ) ) ? '<p>' . $desc . '</p>' : $description;
+		$description =  ( ( $type == 'title' || $type == 'radio' ) && !empty( $desc ) ) ? '<p>' . $desc . '</p>' : $description;
 
 		/* Header of the option. */
 		?><tr valign="top">
@@ -485,6 +485,7 @@ class SF_Settings_API {
 					<?php echo $val; ?>
 					</label><br /><?php
 		endforeach;
+		echo $description;
 		break;
 
 	case 'single_select_page':
