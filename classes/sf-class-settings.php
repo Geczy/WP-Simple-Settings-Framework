@@ -306,7 +306,7 @@ class SF_Settings_API {
 
 		do_action('sf_options_updated', $clean);
 		add_settings_error( $this->get_id(), 'save_options', __( 'Settings saved.', 'geczy' ), 'updated' );
-		return $clean;
+		return apply_filters('sf_options_on_update', $clean);
 	}
 
 	private function set_defaults() {
