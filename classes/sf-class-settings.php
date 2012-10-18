@@ -330,6 +330,14 @@ class SF_Settings_API {
 		return $output;
 	}
 
+	private function get_current_tab() {
+		$tabs = $this->get_tabs();
+		$tabname = !empty ( $_GET['tab'] ) ? $_GET['tab'] : $tabs[0]['slug'];
+		$tabname = sanitize_title($tabname);
+
+		return $tabname;
+	}
+
 	private function template_header() {
 ?>
 		<div class="wrap">
@@ -350,7 +358,7 @@ class SF_Settings_API {
 
 		$options = self::$options;
 		$tabs = $this->get_tabs();
-		$tabname = !empty ( $_GET['tab'] ) ? $_GET['tab'] : $tabs[0]['slug']; ?>
+		$tabname = $this->get_current_tab(); ?>
 
 		<form method="post" action="options.php">
 			<?php settings_fields( $this->get_id() . '_options_nonce' ); ?>
@@ -570,7 +578,7 @@ class SF_Settings_API {
 	// Heading for Navigation
 	private function display_tabs() {
 		$tabs = $this->get_tabs();
-		$tabname = !empty ( $_GET['tab'] ) ? $_GET['tab'] : $tabs[0]['slug'];
+		$tabname = $this->get_current_tab();
 		$menu = '';
 
 		foreach ( $tabs as $tab ) {
