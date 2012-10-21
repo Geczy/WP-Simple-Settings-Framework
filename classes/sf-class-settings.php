@@ -51,11 +51,13 @@ class SF_Settings_API {
 	public static $options = array();
 	public static $current_options = array();
 
+	private $data = array();
+
 	public function __construct( $id, $title, $menu = 'plugins.php' ) {
-		$this->set_assets_url( trailingslashit( plugins_url( 'assets/' , dirname(__FILE__) ) ) );
-		$this->set_id( $id );
-		$this->set_title( $title );
-		$this->set_menu( $menu );
+		$this->assets_url = trailingslashit( plugins_url( 'assets/' , dirname( __FILE__ ) ) );
+		$this->id = $id;
+		$this->title = $title;
+		$this->menu = $menu;
 
 		$this->file = $this->get_main_plugin_file();
 
@@ -63,7 +65,7 @@ class SF_Settings_API {
 		$this->actions();
 
 		self::$options = $this->load_options();
-		self::$current_options = get_option( $this->get_id() . '_options' );
+		self::$current_options = get_option( $this->id . '_options' );
 
 		$this->parse_options();
 
@@ -72,6 +74,35 @@ class SF_Settings_API {
 		if ( !self::$current_options ) {
 			$this->set_defaults();
 		}
+	}
+
+	// ==================================================================
+	//
+	// Getter and setter.
+	//
+	// ------------------------------------------------------------------
+
+	public function __set( $name, $value ) {
+		if ( isset ( $this->data[$name] ) && is_array( $this->data[$name] ) ) {
+			$this->data[$name] = array_merge( $this->data[$name], $value );
+		} else {
+			$this->data[$name] = $value;
+		}
+	}
+
+	public function __get( $name ) {
+		if ( array_key_exists( $name, $this->data ) ) {
+			return $this->data[$name];
+		}
+		return null;
+	}
+
+	public function __isset( $name ) {
+		return isset( $this->data[$name] );
+	}
+
+	public function __unset( $name ) {
+		unset( $this->data[$name] );
 	}
 
 	/**
@@ -95,9 +126,9 @@ class SF_Settings_API {
 	// Add a "Settings" link to the plugins.php page
 	public function add_settings_link( $links, $file ) {
 		$this_plugin = plugin_basename( $this->file );
-		$page = strpos($this->get_menu(), '.php') ? $this->get_menu() : 'admin.php';
+		$page = strpos( $this->menu, '.php' ) ? $this->menu : 'admin.php';
 		if ( $file == $this_plugin ) {
-			$settings_link = '<a href="'.$page.'?page='.$this->get_id().'">' . __( 'Settings', 'geczy' ) . '</a>';
+			$settings_link = '<a href="'.$page.'?page='.$this->id.'">' . __( 'Settings', 'geczy' ) . '</a>';
 			array_unshift( $links, $settings_link );
 		}
 		return $links;
@@ -105,101 +136,9 @@ class SF_Settings_API {
 
 	// ==================================================================
 	//
-	// Getters and setters.
-	//
-	// ------------------------------------------------------------------
-
-	/**
-	 * Get URL to assets
-	 *
-	 * @return string URL to assets
-	 */
-	public function get_assets_url() {
-	    return $this->assets_url;
-	}
-
-	/**
-	 * Set URL to assets
-	 *
-	 * @param  string $assets_url URL to assets
-	 * @return [class type]    $this
-	 */
-	public function set_assets_url($assets_url) {
-	    $this->assets_url = $assets_url;
-
-	    return $this;
-	}
-
-	/**
-	 * Retrieve ID
-	 *
-	 * @return string ID to use throughout the script
-	 */
-	public function get_id() {
-		return $this->id;
-	}
-
-	/**
-	 * Set ID
-	 *
-	 * @param string  $id ID to use throughout the script
-	 * @return [class type]    $this
-	 */
-	public function set_id( $id ) {
-		$this->id = $id;
-
-		return $this;
-	}
-
-	/**
-	 * Retrieve settings page title
-	 *
-	 * @return string
-	 */
-	public function get_title() {
-		return $this->title;
-	}
-
-	/**
-	 * Set settings page title
-	 *
-	 * @param string  $title [description]
-	 * @return [class type]    $this
-	 */
-	public function set_title( $title ) {
-		$this->title = $title;
-
-		return $this;
-	}
-
-
-	/**
-	 * Retrieve location of settings subpage
-	 *
-	 * @return [type] [description]
-	 */
-	public function get_menu() {
-		return $this->menu;
-	}
-
-	/**
-	 * Set settings menu location
-	 *
-	 * @param string  $menu Menu ID
-	 * @return [class type]    $this
-	 */
-	public function set_menu( $menu ) {
-		$this->menu = $menu;
-
-		return $this;
-	}
-
-	// ==================================================================
-	//
 	// Begin initialization.
 	//
 	// ------------------------------------------------------------------
-
 
 	private function includes() {
 		require_once dirname( __FILE__ ) . '/sf-class-sanitize.php';
@@ -215,11 +154,11 @@ class SF_Settings_API {
 
 	/* Resources required on admin screen. */
 	public function admin_enqueue_scripts() {
-		wp_register_script( 'bootstrap-tooltip' , $this->get_assets_url() . 'js/bootstrap-tooltip.js' ,  array( 'jquery' ), '1.0' );
-		wp_register_script( 'select2' , $this->get_assets_url() . 'js/select2/select2.min.js' ,  array( 'jquery' ), '1.0' );
-		wp_register_script( 'sf-scripts' , $this->get_assets_url() . 'js/sf-jquery.js' ,  array( 'jquery' ), '1.0' );
-		wp_register_style( 'select2' , $this->get_assets_url() . 'js/select2/select2.css' );
-		wp_register_style( 'sf-styles' , $this->get_assets_url() . 'css/sf-styles.css' );
+		wp_register_script( 'bootstrap-tooltip' , $this->assets_url . 'js/bootstrap-tooltip.js' ,  array( 'jquery' ), '1.0' );
+		wp_register_script( 'select2' , $this->assets_url . 'js/select2/select2.min.js' ,  array( 'jquery' ), '1.0' );
+		wp_register_script( 'sf-scripts' , $this->assets_url . 'js/sf-jquery.js' ,  array( 'jquery' ), '1.0' );
+		wp_register_style( 'select2' , $this->assets_url . 'js/select2/select2.css' );
+		wp_register_style( 'sf-styles' , $this->assets_url . 'css/sf-styles.css' );
 	}
 
 	public function admin_print_scripts() {
@@ -231,11 +170,11 @@ class SF_Settings_API {
 	}
 
 	public function register_options() {
-		register_setting( $this->get_id() . '_options_nonce', $this->get_id() . '_options', array( &$this, 'validate_options' ) );
+		register_setting( $this->id . '_options_nonce', $this->id . '_options', array( &$this, 'validate_options' ) );
 	}
 
 	public function create_menu() {
-		$page = add_submenu_page( $this->get_menu(), $this->get_title(), $this->get_title(), 'manage_options', $this->get_id(), array( &$this, 'init_settings_page' ) );
+		$page = add_submenu_page( $this->menu, $this->title, $this->title, 'manage_options', $this->id, array( &$this, 'init_settings_page' ) );
 		add_action( 'admin_print_scripts-' . $page, array( &$this, 'admin_print_scripts' ) );
 	}
 
@@ -246,7 +185,7 @@ class SF_Settings_API {
 
 			if ( $option['type'] == 'heading' ) {
 				$tab_name = sanitize_title( $option['name'] );
-				$this->tab_headers[$tab_name] = $option['name'];
+				$this->tab_headers = array( $tab_name => $option['name'] );
 
 				continue;
 			}
@@ -263,7 +202,7 @@ class SF_Settings_API {
 
 	private function load_options() {
 		if ( empty( self::$options ) ) {
-			require_once dirname(dirname(__FILE__)) . '/sf-options.php';
+			require_once dirname( dirname( __FILE__ ) ) . '/sf-options.php';
 			return $options;
 		}
 
@@ -293,25 +232,25 @@ class SF_Settings_API {
 
 			$id = preg_replace( '/[^a-zA-Z0-9._\-]/', '', strtolower( $option['id'] ) );
 
-			// Set checkbox to false if it wasn't sent in the $_POST
-			if ( 'checkbox' == $option['type'] && ! isset( $input[$id] ) )
-				$input[$id] = 0;
+		// Set checkbox to false if it wasn't sent in the $_POST
+		if ( 'checkbox' == $option['type'] && ! isset( $input[$id] ) )
+			$input[$id] = 0;
 
-			// For a value to be submitted to database it must pass through a sanitization filter
-			if ( has_filter( 'geczy_sanitize_' . $option['type'] ) ) {
-				$clean[$id] = apply_filters( 'geczy_sanitize_' . $option['type'], $input[$id], $option );
-			}
+		// For a value to be submitted to database it must pass through a sanitization filter
+		if ( has_filter( 'geczy_sanitize_' . $option['type'] ) ) {
+			$clean[$id] = apply_filters( 'geczy_sanitize_' . $option['type'], $input[$id], $option );
+		}
 
 		endforeach;
 
-		do_action('sf_options_updated', $clean);
-		add_settings_error( $this->get_id(), 'save_options', __( 'Settings saved.', 'geczy' ), 'updated' );
-		return apply_filters('sf_options_on_update', $clean);
+		do_action( 'sf_options_updated', $clean );
+		add_settings_error( $this->id, 'save_options', __( 'Settings saved.', 'geczy' ), 'updated' );
+		return apply_filters( 'sf_options_on_update', $clean );
 	}
 
 	private function set_defaults() {
 		$options = $this->get_defaults();
-		update_option( $this->get_id() . '_options', $options );
+		update_option( $this->id . '_options', $options );
 	}
 
 	private function get_defaults() {
@@ -330,18 +269,10 @@ class SF_Settings_API {
 		return $output;
 	}
 
-	private function get_current_tab() {
-		$tabs = $this->get_tabs();
-		$tabname = !empty ( $_GET['tab'] ) ? $_GET['tab'] : $tabs[0]['slug'];
-		$tabname = sanitize_title($tabname);
-
-		return $tabname;
-	}
-
 	private function template_header() {
 ?>
 		<div class="wrap">
-			<?php screen_icon(); ?><h2><?php echo $this->get_title(); ?></h2>
+			<?php screen_icon(); ?><h2><?php echo $this->title; ?></h2>
 
 			<h2 class="nav-tab-wrapper">
 				<?php echo $this->display_tabs(); ?>
@@ -358,15 +289,15 @@ class SF_Settings_API {
 
 		$options = self::$options;
 		$tabs = $this->get_tabs();
-		$tabname = $this->get_current_tab(); ?>
+		$tabname = !empty ( $_GET['tab'] ) ? $_GET['tab'] : $tabs[0]['slug']; ?>
 
 		<form method="post" action="options.php">
-			<?php settings_fields( $this->get_id() . '_options_nonce' ); ?>
+			<?php settings_fields( $this->id . '_options_nonce' ); ?>
 			<table class="form-table">
 
 			<?php foreach ( $this->tabs[$tabname] as $value ) :
-				$this->settings_options_format( $value );
-			endforeach; ?>
+			$this->settings_options_format( $value );
+		endforeach; ?>
 
 			</table>
 
@@ -413,7 +344,7 @@ class SF_Settings_API {
 		$optionVal   = $optionVal !== false ? esc_attr ( $optionVal ) : false;
 		$numberType  = $type == 'number' && !empty( $restrict ) && is_array( $restrict ) ? true : false;
 		$title       = $name;
-		$name        = $this->get_id() . "_options[{$id}]";
+		$name        = $this->id . "_options[{$id}]";
 
 		$grouped     = !$title ? 'style="padding-top:0px;"' : '';
 		$tip         =  $tip ? '<a href="#" title="' . $tip . '" class="sf-tips" tabindex="99"></a>' : '';
@@ -456,8 +387,8 @@ class SF_Settings_API {
 				 type="<?php echo $type; ?>"
 
 				 <?php if ( $numberType ): ?>
-				 min="<?php echo !empty($restrict['min']) ? $restrict['min'] : ''; ?>"
-				 max="<?php echo !empty($restrict['max']) ? $restrict['max'] : ''; ?>"
+				 min="<?php echo !empty( $restrict['min'] ) ? $restrict['min'] : ''; ?>"
+				 max="<?php echo !empty( $restrict['max'] ) ? $restrict['max'] : ''; ?>"
 				 step="<?php echo isset( $restrict['step'] ) ? $restrict['step'] : 'any'; ?>"
 				 <?php endif; ?>
 
@@ -498,7 +429,7 @@ class SF_Settings_API {
 
 	case 'single_select_page':
 
-		$selected = ($optionVal !== false) ? $optionVal : $std;
+		$selected = ( $optionVal !== false ) ? $optionVal : $std;
 
 		$args = array(
 			'name'       => $name,
@@ -514,13 +445,13 @@ class SF_Settings_API {
 
 	case 'select':
 
-		$selected = ($optionVal !== false) ? $optionVal : $std;
+		$selected = ( $optionVal !== false ) ? $optionVal : $std;
 
 		?><select id="<?php echo $id; ?>"
 				  class="<?php echo $class; ?>"
 				  style="<?php echo $css; ?>"
 				  name="<?php echo $name; ?>"
-		  		  >
+				  >
 
 		<?php foreach ( $options as $key => $val ) : ?>
 					<option value="<?php echo $key; ?>" <?php selected( $selected, $key, true ); ?>>
@@ -538,7 +469,7 @@ class SF_Settings_API {
 							style="<?php if ( $css ) echo $css; else echo 'width:300px;'; ?>"
 							placeholder="<?php echo $placeholder; ?>"
 							rows="3"
-				  ><?php echo ($optionVal !== false) ? $optionVal : $std; ?></textarea>
+				  ><?php echo ( $optionVal !== false ) ? $optionVal : $std; ?></textarea>
 				<?php echo $description;
 		break;
 
@@ -570,6 +501,8 @@ class SF_Settings_API {
 				continue;
 
 			$option['slug'] = sanitize_title( $option['name'] );
+			unset($option['type']);
+
 			$tabs[] = $option;
 		}
 		return $tabs;
@@ -578,12 +511,12 @@ class SF_Settings_API {
 	// Heading for Navigation
 	private function display_tabs() {
 		$tabs = $this->get_tabs();
-		$tabname = $this->get_current_tab();
+		$tabname = !empty ( $_GET['tab'] ) ? $_GET['tab'] : $tabs[0]['slug'];
 		$menu = '';
 
 		foreach ( $tabs as $tab ) {
 			$class = $tabname == $tab['slug'] ? 'nav-tab-active' : '';
-			$menu .= sprintf( '<a id="%s-tab" class="nav-tab %s" title="%s" href="?page=%s&tab=%s">%s</a>', $tab['slug'], $class, $tab['name'], $this->get_id(), $tab['slug'], esc_html( $tab['name'] ) );
+			$menu .= sprintf( '<a id="%s-tab" class="nav-tab %s" title="%s" href="?page=%s&tab=%s">%s</a>', $tab['slug'], $class, $tab['name'], $this->id, $tab['slug'], esc_html( $tab['name'] ) );
 		}
 
 		return $menu;
@@ -591,7 +524,7 @@ class SF_Settings_API {
 
 	public function update_option( $name, $value ) {
 		self::$current_options[$name] = $value;
-		return update_option( $this->get_id() .'_options', self::$current_options );
+		return update_option( $this->id .'_options', self::$current_options );
 	}
 
 	public function get_option( $name, $default = false ) {
