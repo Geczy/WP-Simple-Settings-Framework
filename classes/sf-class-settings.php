@@ -48,9 +48,6 @@ namespace Geczy\WPSettingsFramework;
 
 class SF_Settings_API {
 
-	public static $options = array();
-	public static $current_options = array();
-
 	private $data = array();
 
 	public function __construct( $id, $title, $menu = 'plugins.php' ) {
@@ -64,14 +61,14 @@ class SF_Settings_API {
 		$this->includes();
 		$this->actions();
 
-		self::$options = $this->load_options();
-		self::$current_options = get_option( $this->id . '_options' );
+		$this->options = $this->load_options();
+		$this->current_options = get_option( $this->id . '_options' );
 
 		$this->parse_options();
 
 		/* If the option has no saved data, load the defaults. */
 		/* @TODO: Can prob add this to the activation hook. */
-		if ( !self::$current_options ) {
+		if ( !$this->current_options ) {
 			$this->set_defaults();
 		}
 	}
@@ -179,7 +176,7 @@ class SF_Settings_API {
 	}
 
 	private function parse_options() {
-		$options = self::$options;
+		$options = $this->options;
 
 		foreach ( $options as $option ) {
 
@@ -201,12 +198,12 @@ class SF_Settings_API {
 	}
 
 	private function load_options() {
-		if ( empty( self::$options ) ) {
+		if ( empty( $this->options ) ) {
 			require_once dirname( dirname( __FILE__ ) ) . '/sf-options.php';
 			return $options;
 		}
 
-		return self::$options;
+		return $this->options;
 	}
 
 	public function validate_options( $input ) {
@@ -214,11 +211,11 @@ class SF_Settings_API {
 			return $this->get_defaults();
 
 		$clean = array();
-		$options = self::$options;
+		$options = $this->options;
 
 		$tabname = $_POST['currentTab'];
 
-		foreach ( self::$current_options as $id => $value ) :
+		foreach ( $this->current_options as $id => $value ) :
 			$clean[$id] = $value;
 		endforeach;
 
@@ -255,7 +252,7 @@ class SF_Settings_API {
 
 	private function get_defaults() {
 		$output = array();
-		$config = self::$options;
+		$config = $this->options;
 
 		foreach ( $config as $option ) {
 			if ( ! isset( $option['id'] ) || ! isset( $option['std'] ) || ! isset( $option['type'] ) )
@@ -285,9 +282,9 @@ class SF_Settings_API {
 
 	private function template_body() {
 
-		if ( empty( self::$options ) ) return false;
+		if ( empty( $this->options ) ) return false;
 
-		$options = self::$options;
+		$options = $this->options;
 		$tabs = $this->get_tabs();
 		$tabname = !empty ( $_GET['tab'] ) ? $_GET['tab'] : $tabs[0]['slug']; ?>
 
@@ -495,7 +492,7 @@ class SF_Settings_API {
 
 	private function get_tabs() {
 		$tabs = array();
-		foreach ( self::$options as $option ) {
+		foreach ( $this->options as $option ) {
 
 			if ( $option['type'] != 'heading' )
 				continue;
@@ -523,12 +520,12 @@ class SF_Settings_API {
 	}
 
 	public function update_option( $name, $value ) {
-		self::$current_options[$name] = $value;
-		return update_option( $this->id .'_options', self::$current_options );
+		$this->current_options[$name] = $value;
+		return update_option( $this->id .'_options', $this->current_options );
 	}
 
 	public function get_option( $name, $default = false ) {
-		return isset( self::$current_options[$name] ) ? self::$current_options[$name] : $default;
+		return isset( $this->current_options[$name] ) ? $this->current_options[$name] : $default;
 	}
 
 }
