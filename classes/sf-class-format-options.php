@@ -32,7 +32,6 @@ class SF_Format_Options extends SF_Settings_API {
 			'std',
 			'options',
 			'restrict',
-			'group',
 		);
 
 		foreach ( $defaultOptions as $key ) {
@@ -51,7 +50,7 @@ class SF_Format_Options extends SF_Settings_API {
 
 		$grouped     = !$title ? 'style="padding-top:0px;"' : '';
 		$tip         =  $tip ? '<a href="#" title="' . $tip . '" class="sf-tips" tabindex="99"></a>' : '';
-		$description =  $desc && !$grouped && !$group && $type != 'checkbox' ? '<br /><small>' . $desc . '</small>' : '<label for="' . $id . '"> ' .$desc . '</label>';
+		$description =  $desc && !$grouped && $type != 'checkbox' ? '<br /><small>' . $desc . '</small>' : '<label for="' . $id . '"> ' .$desc . '</label>';
 		$description =  ( ( $type == 'title' || $type == 'radio' ) && !empty( $desc ) ) ? '<p>' . $desc . '</p>' : $description;
 
 		/* Header of the option. */
