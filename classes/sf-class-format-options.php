@@ -20,33 +20,36 @@ class SF_Format_Options extends SF_Settings_API {
 	public function settings_options_format( $value ) {
 		if ( empty( $value ) ) return false;
 
-		$defaultOptions = array(
-			'name',
-			'desc',
-			'placeholder',
-			'class',
-			'tip',
-			'id',
-			'css',
-			'type',
-			'std',
-			'options',
-			'restrict',
+		$defaults = array(
+			'name'        => '',
+			'desc'        => '',
+			'placeholder' => '',
+			'class'       => '',
+			'tip'         => '',
+			'id'          => '',
+			'css'         => '',
+			'type'        => 'text',
+			'std'         => '',
+			'options'     => array(),
+			'restrict'    => array(),
 		);
 
-		foreach ( $defaultOptions as $key ) {
-			if ( !is_array( $key ) && !isset( $value[$key] ) ) $value[$key] = '';
-			else if ( is_array( $key ) ) foreach ( $key as $val ) $value[$key][$val] = esc_attr( $value[$key][$val] );
-		}
-
 		/* Each to it's own variable for slim-ness' sakes. */
-		extract( $value );
+		extract(shortcode_atts($defaults, $value));
+
+		$restrict_defaults = array(
+			'min'  => 0,
+			'max'  => '',
+			'step' => 'any',
+		);
+
+		$restrict = shortcode_atts($restrict_defaults, $restrict);
 
 		$optionVal   = $this->get_option( $id );
 		$optionVal   = $optionVal !== false ? esc_attr ( $optionVal ) : false;
-		$numberType  = $type == 'number' && !empty( $restrict ) && is_array( $restrict ) ? true : false;
+
 		$title       = $name;
-		$name        = $this->$id . "_options[{$id}]";
+		$name        = $this->id . "_options[{$id}]";
 
 		$grouped     = !$title ? 'style="padding-top:0px;"' : '';
 		$tip         =  $tip ? '<a href="#" title="' . $tip . '" class="sf-tips" tabindex="99"></a>' : '';
@@ -88,10 +91,10 @@ class SF_Format_Options extends SF_Settings_API {
 				 id="<?php echo $id; ?>"
 				 type="<?php echo $type; ?>"
 
-				 <?php if ( $numberType ): ?>
-				 min="<?php echo !empty( $restrict['min'] ) ? $restrict['min'] : ''; ?>"
-				 max="<?php echo !empty( $restrict['max'] ) ? $restrict['max'] : ''; ?>"
-				 step="<?php echo isset( $restrict['step'] ) ? $restrict['step'] : 'any'; ?>"
+				 <?php if ( $type == 'number' ): ?>
+				 min="<?php echo $restrict['min']; ?>"
+				 max="<?php echo $restrict['max']; ?>"
+				 step="<?php echo $restrict['step']; ?>"
 				 <?php endif; ?>
 
 				 class="regular-text <?php echo $class; ?>"
