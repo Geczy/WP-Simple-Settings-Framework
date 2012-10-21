@@ -52,12 +52,12 @@ class SF_Format_Options extends SF_Settings_API {
 		$name        = $this->id . "_options[{$id}]";
 
 		$grouped     = !$title ? 'style="padding-top:0px;"' : '';
-		$tip         =  $tip ? '<a href="#" title="' . $tip . '" class="sf-tips" tabindex="99"></a>' : '';
-		$description =  $desc && !$grouped && $type != 'checkbox' ? '<br /><small>' . $desc . '</small>' : '<label for="' . $id . '"> ' .$desc . '</label>';
-		$description =  ( ( $type == 'title' || $type == 'radio' ) && !empty( $desc ) ) ? '<p>' . $desc . '</p>' : $description;
+		$tip         = SF_Format_Options::get_formatted_tip($tip);
+		$description = $desc && !$grouped && $type != 'checkbox' ? '<br /><small>' . $desc . '</small>' : '<label for="' . $id . '"> ' .$desc . '</label>';
+		$description = ( ( $type == 'title' || $type == 'radio' ) && !empty( $desc ) ) ? '<p>' . $desc . '</p>' : $description; ?>
 
-		/* Header of the option. */
-		?><tr valign="top">
+		<!-- Header of the option. -->
+		<tr valign="top">
 		<?php if ( $type != 'heading' && $type != 'title' ) : ?>
 					<th scope="row" <?php echo $grouped; ?> >
 
@@ -188,6 +188,10 @@ class SF_Format_Options extends SF_Settings_API {
 		/* Footer of the option. */
 		if ( $type != 'heading' || $type != 'title' ) echo '</td></tr>';
 
+	}
+
+	private function get_formatted_tip($tip) {
+		return $tip ? sprintf('<a href="#" title="%s" class="sf-tips" tabindex="99"></a>', $tip) : '';
 	}
 
 }
