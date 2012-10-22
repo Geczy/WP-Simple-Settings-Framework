@@ -45,34 +45,39 @@ class SF_Format_Options extends SF_Settings_API {
 
 		$restrict = shortcode_atts($restrict_defaults, $restrict);
 
-		$optionVal   = $this->get_option( $id );
-		$optionVal   = $optionVal !== false ? esc_attr ( $optionVal ) : false;
+		$value   = $this->get_option( $id );
+		$value   = $value !== false ? esc_attr ( $value ) : false;
 
-		$title       = $name;
-		$name        = $this->id . "_options[{$id}]";
+		$title   = $name;
+		$name    = $this->id . "_options[{$id}]";
 
-		$grouped     = !$title ? 'style="padding-top:0px;"' : '';
-		$tip         = SF_Format_Options::get_formatted_tip($tip);
-		$description = $desc && !$grouped && $type != 'checkbox' ? '<br /><small>' . $desc . '</small>' : '<label for="' . $id . '"> ' .$desc . '</label>';
-		$description = ( ( $type == 'title' || $type == 'radio' ) && !empty( $desc ) ) ? '<p>' . $desc . '</p>' : $description; ?>
+		$grouped = !$title ? ' style="padding-top:0px;"' : '';
+		$tip     = SF_Format_Options::get_formatted_tip($tip);
+
+		$description = $desc && !$grouped && $type != 'checkbox'
+						? '<br /><small>' . $desc . '</small>'
+						: '<label for="' . $id . '"> ' .$desc . '</label>';
+
+		$description = ( ( $type == 'title' || $type == 'radio' ) && !empty( $desc ) )
+						? '<p>' . $desc . '</p>'
+						: $description; ?>
 
 		<!-- Header of the option. -->
 		<tr valign="top">
 		<?php if ( $type != 'heading' && $type != 'title' ) : ?>
-					<th scope="row" <?php echo $grouped; ?> >
+			<th scope="row"<?php echo $grouped; ?>>
 
-						<?php echo $tip; ?>
+				<?php echo $tip; ?>
 
-						<?php if ( !$grouped ) : ?>
-						<label for="<?php echo $name; ?>" class="description"><?php echo $title; ?></label>
-						<?php endif; ?>
+				<?php if ( !$grouped ) : ?>
+					<label for="<?php echo $name; ?>" class="description"><?php echo $title; ?></label>
+				<?php endif; ?>
 
-					</th>
+			</th>
 		<?php endif; ?>
 					<td <?php echo $grouped; ?> >
-		<?php
-		/* Meat & footer of the option. */
-		switch ( $type ) :
+
+		<?php switch ( $type ) :
 
 		case 'title':
 			?><thead>
@@ -100,7 +105,7 @@ class SF_Format_Options extends SF_Settings_API {
 				 class="regular-text <?php echo $class; ?>"
 				 style="<?php echo $css; ?>"
 				 placeholder="<?php echo $placeholder; ?>"
-				 value="<?php echo $optionVal !== false ? $optionVal : $std; ?>"
+				 value="<?php echo $value !== false ? $value : $std; ?>"
 				/>
 		<?php echo $description;
 		break;
@@ -111,7 +116,7 @@ class SF_Format_Options extends SF_Settings_API {
 				 type="checkbox"
 				 class="<?php echo $class; ?>"
 				 style="<?php echo $css; ?>"
-				 <?php if ( $optionVal !== false ) echo checked( $optionVal, 1, false ); else echo checked( $std, 1, false ); ?>
+				 <?php if ( $value !== false ) echo checked( $value, 1, false ); else echo checked( $std, 1, false ); ?>
 				 />
 		<?php echo $description;
 		break;
@@ -124,7 +129,7 @@ class SF_Format_Options extends SF_Settings_API {
 						   id="<?php echo $key; ?>"
 						   value="<?php echo $key; ?>"
 						   class="<?php echo $class; ?>"
-							<?php if ( $optionVal !== false ) echo checked( $optionVal, $key, false ); else echo checked( $std, $key, false ); ?>
+							<?php if ( $value !== false ) echo checked( $value, $key, false ); else echo checked( $std, $key, false ); ?>
 					/>
 					<?php echo $val; ?>
 					</label><br /><?php
@@ -134,7 +139,7 @@ class SF_Format_Options extends SF_Settings_API {
 
 	case 'single_select_page':
 
-		$selected = ( $optionVal !== false ) ? $optionVal : $std;
+		$selected = ( $value !== false ) ? $value : $std;
 
 		$args = array(
 			'name'       => $name,
@@ -150,7 +155,7 @@ class SF_Format_Options extends SF_Settings_API {
 
 	case 'select':
 
-		$selected = ( $optionVal !== false ) ? $optionVal : $std;
+		$selected = ( $value !== false ) ? $value : $std;
 
 		?><select id="<?php echo $id; ?>"
 				  class="<?php echo $class; ?>"
@@ -174,7 +179,7 @@ class SF_Format_Options extends SF_Settings_API {
 							style="<?php if ( $css ) echo $css; else echo 'width:300px;'; ?>"
 							placeholder="<?php echo $placeholder; ?>"
 							rows="3"
-				  ><?php echo ( $optionVal !== false ) ? $optionVal : $std; ?></textarea>
+				  ><?php echo ( $value !== false ) ? $value : $std; ?></textarea>
 				<?php echo $description;
 		break;
 
