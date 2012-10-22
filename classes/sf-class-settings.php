@@ -115,7 +115,7 @@ class SF_Settings_API {
 
 		// Three functions is how long it took for
 		// the main plugin to call us. So three we go!
-		$file = $file[2]['file'];
+		$file = $file[1]['file'];
 
 		return $file;
 	}
