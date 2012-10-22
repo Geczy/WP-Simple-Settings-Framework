@@ -35,7 +35,7 @@ class SF_Format_Options extends SF_Settings_API {
 		);
 
 		/* Each to it's own variable for slim-ness' sakes. */
-		extract(shortcode_atts($defaults, $value));
+		extract( shortcode_atts( $defaults, $value ) );
 
 		$restrict_defaults = array(
 			'min'  => 0,
@@ -43,7 +43,7 @@ class SF_Format_Options extends SF_Settings_API {
 			'step' => 'any',
 		);
 
-		$restrict = shortcode_atts($restrict_defaults, $restrict);
+		$restrict = shortcode_atts( $restrict_defaults, $restrict );
 
 		$value   = $this->get_option( $id );
 		$value   = $value !== false ? esc_attr ( $value ) : false;
@@ -52,15 +52,15 @@ class SF_Format_Options extends SF_Settings_API {
 		$name    = $this->id . "_options[{$id}]";
 
 		$grouped = !$title ? ' style="padding-top:0px;"' : '';
-		$tip     = SF_Format_Options::get_formatted_tip($tip);
+		$tip     = SF_Format_Options::get_formatted_tip( $tip );
 
 		$description = $desc && !$grouped && $type != 'checkbox'
-						? '<br /><small>' . $desc . '</small>'
-						: '<label for="' . $id . '"> ' .$desc . '</label>';
+			? '<br /><small>' . $desc . '</small>'
+			: '<label for="' . $id . '"> ' .$desc . '</label>';
 
 		$description = ( ( $type == 'title' || $type == 'radio' ) && !empty( $desc ) )
-						? '<p>' . $desc . '</p>'
-						: $description; ?>
+			? '<p>' . $desc . '</p>'
+			: $description; ?>
 
 		<!-- Header of the option. -->
 		<tr valign="top">
@@ -77,41 +77,45 @@ class SF_Format_Options extends SF_Settings_API {
 		<?php endif; ?>
 					<td <?php echo $grouped; ?> >
 
-		<?php switch ( $type ) :
+<?php switch ( $type ) :
+			// Heading for Navigation
+		case 'heading' : ?>
+			<h3><?php echo esc_html( $value['name'] ); ?></h3>
+			<?php break;
 
-		case 'title':
-			?><thead>
+	case 'title': ?>
+		<thead>
 			<tr>
 				<th scope="col" colspan="2">
 					<h3 class="title"><?php echo $title; ?></h3>
 					<?php echo $description; ?>
 				</th>
 			</tr>
-		  </thead><?php
-		break;
+		  </thead>
+		<?php break;
 
 	case 'text'   :
-	case 'number' :
-		?><input name="<?php echo $name; ?>"
-				 id="<?php echo $id; ?>"
-				 type="<?php echo $type; ?>"
+	case 'number' : ?>
+		<input name="<?php echo $name; ?>"
+			 id="<?php echo $id; ?>"
+			 type="<?php echo $type; ?>"
 
-				 <?php if ( $type == 'number' ): ?>
-				 min="<?php echo $restrict['min']; ?>"
-				 max="<?php echo $restrict['max']; ?>"
-				 step="<?php echo $restrict['step']; ?>"
-				 <?php endif; ?>
+			 <?php if ( $type == 'number' ): ?>
+			 min="<?php echo $restrict['min']; ?>"
+			 max="<?php echo $restrict['max']; ?>"
+			 step="<?php echo $restrict['step']; ?>"
+			 <?php endif; ?>
 
-				 class="regular-text <?php echo $class; ?>"
-				 style="<?php echo $css; ?>"
-				 placeholder="<?php echo $placeholder; ?>"
-				 value="<?php echo $value !== false ? $value : $std; ?>"
-				/>
+			 class="regular-text <?php echo $class; ?>"
+			 style="<?php echo $css; ?>"
+			 placeholder="<?php echo $placeholder; ?>"
+			 value="<?php echo $value !== false ? $value : $std; ?>"
+			/>
 		<?php echo $description;
 		break;
 
-	case 'checkbox':
-		?><input name="<?php echo $name; ?>"
+	case 'checkbox': ?>
+		<input name="<?php echo $name; ?>"
 				 id="<?php echo $id; ?>"
 				 type="checkbox"
 				 class="<?php echo $class; ?>"
@@ -121,8 +125,8 @@ class SF_Format_Options extends SF_Settings_API {
 		<?php echo $description;
 		break;
 
-	case 'radio':
-		foreach ( $options as $key => $val ) : ?>
+	case 'radio': ?>
+		<?php foreach ( $options as $key => $val ) : ?>
 					<label class="radio">
 					<input type="radio"
 						   name="<?php echo $name; ?>"
@@ -132,8 +136,8 @@ class SF_Format_Options extends SF_Settings_API {
 							<?php if ( $value !== false ) echo checked( $value, $key, false ); else echo checked( $std, $key, false ); ?>
 					/>
 					<?php echo $val; ?>
-					</label><br /><?php
-		endforeach;
+					</label><br />
+		<?php endforeach;
 		echo $description;
 		break;
 
@@ -155,9 +159,9 @@ class SF_Format_Options extends SF_Settings_API {
 
 	case 'select':
 
-		$selected = ( $value !== false ) ? $value : $std;
+		$selected = ( $value !== false ) ? $value : $std; ?>
 
-		?><select id="<?php echo $id; ?>"
+		<select id="<?php echo $id; ?>"
 				  class="<?php echo $class; ?>"
 				  style="<?php echo $css; ?>"
 				  name="<?php echo $name; ?>"
@@ -172,8 +176,8 @@ class SF_Format_Options extends SF_Settings_API {
 		<script type="text/javascript">jQuery(function() {jQuery("#<?php echo $id; ?>").select2({ width: '350px' });});</script>
 		<?php break;
 
-	case 'textarea':
-		?><textarea name="<?php echo $name; ?>"
+	case 'textarea': ?>
+		<textarea name="<?php echo $name; ?>"
 							id="<?php echo $id; ?>"
 							class="large-text <?php echo $class; ?>"
 							style="<?php if ( $css ) echo $css; else echo 'width:300px;'; ?>"
@@ -183,11 +187,6 @@ class SF_Format_Options extends SF_Settings_API {
 				<?php echo $description;
 		break;
 
-		// Heading for Navigation
-	case 'heading' :
-		?><h3><?php echo esc_html( $value['name'] ); ?></h3><?php
-		break;
-
 		endswitch;
 
 		/* Footer of the option. */
@@ -195,8 +194,8 @@ class SF_Format_Options extends SF_Settings_API {
 
 	}
 
-	private function get_formatted_tip($tip) {
-		return $tip ? sprintf('<a href="#" title="%s" class="sf-tips" tabindex="99"></a>', $tip) : '';
+	private function get_formatted_tip( $tip ) {
+		return $tip ? sprintf( '<a href="#" title="%s" class="sf-tips" tabindex="99"></a>', $tip ) : '';
 	}
 
 }
