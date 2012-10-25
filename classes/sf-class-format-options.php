@@ -32,6 +32,7 @@ class SF_Format_Options extends SF_Settings_API {
 			'std'         => '',
 			'options'     => array(),
 			'restrict'    => array(),
+			'disabled'    => '',
 		);
 
 		/* Each to it's own variable for slim-ness' sakes. */
@@ -89,13 +90,27 @@ class SF_Format_Options extends SF_Settings_API {
 			</tr>
 		  </thead><?php
 		break;
-
+	case 'html':
+		echo $prewritten;
+		break;
+	case 'prewritten_text':
+				?><input name="<?php echo $name; ?>"
+				 id="<?php echo $id; ?>"
+				 type="<?php echo $type; ?>"
+				<?php if ($disabled == 'true'){ ?> disabled="<?php echo $disabled;?>"<?php }?>
+				 class="regular-text <?php echo $class; ?>"
+				 style="<?php echo $css; ?>"
+				 placeholder="<?php echo $placeholder; ?>"
+				 value="<?php echo $prewritten; ?>"
+				/>
+		<?php echo $description;
+		break;
 	case 'text'   :
 	case 'number' :
 		?><input name="<?php echo $name; ?>"
 				 id="<?php echo $id; ?>"
 				 type="<?php echo $type; ?>"
-
+				<?php if ($disabled == 'true'){ ?> disabled="<?php echo $disabled;?>"<?php }?>
 				 <?php if ( $type == 'number' ): ?>
 				 min="<?php echo $restrict['min']; ?>"
 				 max="<?php echo $restrict['max']; ?>"
