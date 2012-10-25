@@ -32,6 +32,7 @@ class SF_Format_Options extends SF_Settings_API {
 			'std'         => '',
 			'options'     => array(),
 			'restrict'    => array(),
+			'disabled'    => '',
 		);
 
 		/* Each to it's own variable for slim-ness' sakes. */
@@ -95,7 +96,7 @@ class SF_Format_Options extends SF_Settings_API {
 		?><input name="<?php echo $name; ?>"
 				 id="<?php echo $id; ?>"
 				 type="<?php echo $type; ?>"
-
+				<?php if ($disabled == 'true'){ ?> disabled="<?php echo $disabled;?>"<?php }?>
 				 <?php if ( $type == 'number' ): ?>
 				 min="<?php echo $restrict['min']; ?>"
 				 max="<?php echo $restrict['max']; ?>"
