@@ -183,10 +183,9 @@ class SF_Settings_API {
 	private function load_options() {
 		if ( empty( $this->options ) ) {
 			require_once dirname( dirname( __FILE__ ) ) . '/sf-options.php';
-			return $options;
-		}
+		} else { $options = $this->options; }
 
-		return $this->options;
+		return apply_filters('sf_options', $options);
 	}
 
 	public function validate_options( $input ) {
@@ -269,15 +268,21 @@ class SF_Settings_API {
 
 		$options = $this->options;
 		$tabs = $this->get_tabs();
-		$tabname = !empty ( $_GET['tab'] ) ? $_GET['tab'] : $tabs[0]['slug']; ?>
+		$tabname = !empty ( $_GET['tab'] ) ? $_GET['tab'] : $tabs[0]['slug'];
+
+		$options = apply_filters('sf_options_tab-' . $tabname, $this->tabs[$tabname]); ?>
 
 		<form method="post" action="options.php">
 			<?php settings_fields( $this->id . '_options_nonce' ); ?>
 			<table class="form-table">
 
-			<?php foreach ( $this->tabs[$tabname] as $value ) :
-			SF_Format_Options::settings_options_format( $value );
-			endforeach; ?>
+			<?php
+				foreach ( $options as $value ) :
+					SF_Format_Options::settings_options_format( $value );
+				endforeach;
+
+				do_action('sf_options_tab-' . $tabname);
+			?>
 
 			</table>
 
