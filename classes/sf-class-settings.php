@@ -41,7 +41,7 @@
  * @copyright   2012 Matt Gates.
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link        http://mgates.me
- * @version     1.0
+ * @version     1.1
  */
 
 namespace Geczy\WPSettingsFramework;
