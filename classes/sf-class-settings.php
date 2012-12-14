@@ -103,8 +103,7 @@ class SF_Settings_API {
 	}
 
 	/**
-	 * Return the main plugin that's calling the Jigoshop
-	 * dependencies library.
+	 * Return the main plugin that's calling us
 	 *
 	 * @access private
 	 *
