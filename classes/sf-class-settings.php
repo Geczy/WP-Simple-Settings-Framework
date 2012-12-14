@@ -50,13 +50,13 @@ class SF_Settings_API {
 
 	private $data = array();
 
-	public function __construct( $id, $title, $menu = 'plugins.php' ) {
+	public function __construct( $id, $title, $menu = 'plugins.php', $file ) {
 		$this->assets_url = trailingslashit( plugins_url( 'assets/' , dirname( __FILE__ ) ) );
 		$this->id = $id;
 		$this->title = $title;
 		$this->menu = $menu;
 
-		$this->file = $this->get_main_plugin_file();
+		$this->file = $file;
 
 		$this->includes();
 		$this->actions();
@@ -100,23 +100,6 @@ class SF_Settings_API {
 
 	public function __unset( $name ) {
 		unset( $this->data[$name] );
-	}
-
-	/**
-	 * Return the main plugin that's calling us
-	 *
-	 * @access private
-	 *
-	 * @return string File path to the main plugin.
-	 */
-	private function get_main_plugin_file() {
-		$file = debug_backtrace();
-
-		// Three functions is how long it took for
-		// the main plugin to call us. So three we go!
-		$file = $file[2]['file'];
-
-		return $file;
 	}
 
 	// Add a "Settings" link to the plugins.php page
