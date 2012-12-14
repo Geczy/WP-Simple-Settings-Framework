@@ -349,7 +349,9 @@ class SF_Settings_API {
 	}
 
 	public function update_option( $name, $value ) {
-		$this->current_options[$name] = $value;
+		// Overwrite the key/value pair
+		$this->current_options = array($name => $value) + $this->current_options;
+
 		return update_option( $this->id .'_options', $this->current_options );
 	}
 
