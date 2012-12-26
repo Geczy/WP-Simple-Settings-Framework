@@ -44,306 +44,308 @@
  * @version     1.1
  */
 
-namespace Geczy\WPSettingsFramework;
+if ( ! class_exists( 'SF_Settings_API' ) ) {
 
-class SF_Settings_API {
+	class SF_Settings_API {
 
-	private $data = array();
+		private $data = array();
 
-	public function __construct( $id, $title, $menu = 'plugins.php', $file ) {
-		$this->assets_url = trailingslashit( plugins_url( 'assets/' , dirname( __FILE__ ) ) );
-		$this->id = $id;
-		$this->title = $title;
-		$this->menu = $menu;
+		public function __construct( $id, $title, $menu = '', $file ) {
+			$this->assets_url = trailingslashit( plugins_url( 'assets/' , dirname( __FILE__ ) ) );
+			$this->id = $id;
+			$this->title = $title;
+			$this->menu = empty($menu) ? 'plugins.php' : $menu;
 
-		$this->file = $file;
+			$this->file = $file;
 
-		$this->includes();
-		$this->actions();
+			$this->includes();
+			$this->actions();
 
-		$this->options = $this->load_options();
-		$this->current_options = get_option( $this->id . '_options' );
+			$this->options = $this->load_options();
+			$this->current_options = get_option( $this->id . '_options' );
 
-		$this->parse_options();
+			$this->parse_options();
 
-		/* If the option has no saved data, load the defaults. */
-		/* @TODO: Can prob add this to the activation hook. */
-		if ( !$this->current_options ) {
-			$this->set_defaults();
+			/* If the option has no saved data, load the defaults. */
+			/* @TODO: Can prob add this to the activation hook. */
+			if ( !$this->current_options ) {
+				$this->set_defaults();
+			}
 		}
-	}
 
-	// ==================================================================
-	//
-	// Getter and setter.
-	//
-	// ------------------------------------------------------------------
+		// ==================================================================
+		//
+		// Getter and setter.
+		//
+		// ------------------------------------------------------------------
 
-	public function __set( $name, $value ) {
-		if ( isset ( $this->data[$name] ) && is_array( $this->data[$name] ) ) {
-			$this->data[$name] = array_merge( $this->data[$name], $value );
-		} else {
-			$this->data[$name] = $value;
+		public function __set( $name, $value ) {
+			if ( isset ( $this->data[$name] ) && is_array( $this->data[$name] ) ) {
+				$this->data[$name] = array_merge( $this->data[$name], $value );
+			} else {
+				$this->data[$name] = $value;
+			}
 		}
-	}
 
-	public function __get( $name ) {
-		if ( array_key_exists( $name, $this->data ) ) {
-			return $this->data[$name];
+		public function __get( $name ) {
+			if ( array_key_exists( $name, $this->data ) ) {
+				return $this->data[$name];
+			}
+			return null;
 		}
-		return null;
-	}
 
-	public function __isset( $name ) {
-		return isset( $this->data[$name] );
-	}
-
-	public function __unset( $name ) {
-		unset( $this->data[$name] );
-	}
-
-	// Add a "Settings" link to the plugins.php page
-	public function add_settings_link( $links, $file ) {
-		$this_plugin = plugin_basename( $this->file );
-		$page = strpos( $this->menu, '.php' ) ? $this->menu : 'admin.php';
-		if ( $file == $this_plugin ) {
-			$settings_link = '<a href="'.$page.'?page='.$this->id.'">' . __( 'Settings', 'geczy' ) . '</a>';
-			array_unshift( $links, $settings_link );
+		public function __isset( $name ) {
+			return isset( $this->data[$name] );
 		}
-		return $links;
-	}
 
-	// ==================================================================
-	//
-	// Begin initialization.
-	//
-	// ------------------------------------------------------------------
+		public function __unset( $name ) {
+			unset( $this->data[$name] );
+		}
 
-	private function includes() {
-		require_once dirname( __FILE__ ) . '/sf-class-sanitize.php';
-		require_once dirname( __FILE__ ) . '/sf-class-format-options.php';
-		new SF_Sanitize;
-	}
+		// Add a "Settings" link to the plugins.php page
+		public function add_settings_link( $links, $file ) {
+			$this_plugin = plugin_basename( $this->file );
+			$page = strpos( $this->menu, '.php' ) ? $this->menu : 'admin.php';
+			if ( $file == $this_plugin ) {
+				$settings_link = '<a href="'.$page.'?page='.$this->id.'">' . __( 'Settings', 'geczy' ) . '</a>';
+				array_unshift( $links, $settings_link );
+			}
+			return $links;
+		}
 
-	private function actions() {
-		add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_scripts' ) );
-		add_action( 'admin_init', array( &$this, 'register_options' ) );
-		add_action( 'admin_menu', array( &$this, 'create_menu' ) );
-		add_filter( 'plugin_action_links', array( &$this, 'add_settings_link' ), 10, 2 );
-	}
+		// ==================================================================
+		//
+		// Begin initialization.
+		//
+		// ------------------------------------------------------------------
 
-	/* Resources required on admin screen. */
-	public function admin_enqueue_scripts() {
-		wp_register_script( 'bootstrap-tooltip' , $this->assets_url . 'js/bootstrap-tooltip.js' ,  array( 'jquery' ), '1.0' );
-		wp_register_script( 'select2' , $this->assets_url . 'js/select2/select2.min.js' ,  array( 'jquery' ), '1.0' );
-		wp_register_script( 'sf-scripts' , $this->assets_url . 'js/sf-jquery.js' ,  array( 'jquery' ), '1.0' );
-		wp_register_style( 'select2' , $this->assets_url . 'js/select2/select2.css' );
-		wp_register_style( 'sf-styles' , $this->assets_url . 'css/sf-styles.css' );
-	}
+		private function includes() {
+			require_once dirname( __FILE__ ) . '/sf-class-sanitize.php';
+			require_once dirname( __FILE__ ) . '/sf-class-format-options.php';
+			new SF_Sanitize;
+		}
 
-	public function admin_print_scripts() {
-		wp_enqueue_script( 'bootstrap-tooltip' );
-		wp_enqueue_script( 'select2' );
-		wp_enqueue_script( 'sf-scripts' );
-		wp_enqueue_style( 'select2' );
-		wp_enqueue_style( 'sf-styles' );
-	}
+		private function actions() {
+			add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_scripts' ) );
+			add_action( 'admin_init', array( &$this, 'register_options' ) );
+			add_action( 'admin_menu', array( &$this, 'create_menu' ) );
+			add_filter( 'plugin_action_links', array( &$this, 'add_settings_link' ), 10, 2 );
+		}
 
-	public function register_options() {
-		register_setting( $this->id . '_options_nonce', $this->id . '_options', array( &$this, 'validate_options' ) );
-	}
+		/* Resources required on admin screen. */
+		public function admin_enqueue_scripts() {
+			wp_register_script( 'bootstrap-tooltip' , $this->assets_url . 'js/bootstrap-tooltip.js' ,  array( 'jquery' ), '1.0' );
+			wp_register_script( 'select2' , $this->assets_url . 'js/select2/select2.min.js' ,  array( 'jquery' ), '1.0' );
+			wp_register_script( 'sf-scripts' , $this->assets_url . 'js/sf-jquery.js' ,  array( 'jquery' ), '1.0' );
+			wp_register_style( 'select2' , $this->assets_url . 'js/select2/select2.css' );
+			wp_register_style( 'sf-styles' , $this->assets_url . 'css/sf-styles.css' );
+		}
 
-	public function create_menu() {
-		$page = add_submenu_page( $this->menu, $this->title, $this->title, 'manage_options', $this->id, array( &$this, 'init_settings_page' ) );
-		add_action( 'admin_print_scripts-' . $page, array( &$this, 'admin_print_scripts' ) );
-	}
+		public function admin_print_scripts() {
+			wp_enqueue_script( 'bootstrap-tooltip' );
+			wp_enqueue_script( 'select2' );
+			wp_enqueue_script( 'sf-scripts' );
+			wp_enqueue_style( 'select2' );
+			wp_enqueue_style( 'sf-styles' );
+		}
 
-	private function parse_options() {
-		$options = $this->options;
+		public function register_options() {
+			register_setting( $this->id . '_options_nonce', $this->id . '_options', array( &$this, 'validate_options' ) );
+		}
 
-		foreach ( $options as $option ) {
+		public function create_menu() {
+			$page = add_submenu_page( $this->menu, $this->title, $this->title, 'manage_options', $this->id, array( &$this, 'init_settings_page' ) );
+			add_action( 'admin_print_scripts-' . $page, array( &$this, 'admin_print_scripts' ) );
+		}
 
-			if ( $option['type'] == 'heading' ) {
-				$tab_name = sanitize_title( $option['name'] );
-				$this->tab_headers = array( $tab_name => $option['name'] );
+		private function parse_options() {
+			$options = $this->options;
 
-				continue;
+			foreach ( $options as $option ) {
+
+				if ( $option['type'] == 'heading' ) {
+					$tab_name = sanitize_title( $option['name'] );
+					$this->tab_headers = array( $tab_name => $option['name'] );
+
+					continue;
+				}
+
+				$option['tab'] = $tab_name;
+				$tabs[$tab_name][] = $option;
+
 			}
 
-			$option['tab'] = $tab_name;
-			$tabs[$tab_name][] = $option;
+			$this->tabs = $tabs;
 
+			return $tabs;
 		}
 
-		$this->tabs = $tabs;
+		private function load_options() {
+			if ( empty( $this->options ) ) {
+				require_once dirname( dirname( __FILE__ ) ) . '/sf-options.php';
+			} else { $options = $this->options; }
 
-		return $tabs;
-	}
-
-	private function load_options() {
-		if ( empty( $this->options ) ) {
-			require_once dirname( dirname( __FILE__ ) ) . '/sf-options.php';
-		} else { $options = $this->options; }
-
-		return apply_filters('sf_options', $options);
-	}
-
-	public function validate_options( $input ) {
-		if ( !isset( $_POST['update'] ) )
-			return $this->get_defaults();
-
-		$clean = array();
-		$options = $this->options;
-
-		$tabname = $_POST['currentTab'];
-
-		foreach ( $this->current_options as $id => $value ) :
-			$clean[$id] = $value;
-		endforeach;
-
-		foreach ( $this->tabs[$tabname] as $option ) :
-
-			if ( ! isset( $option['id'] ) )
-				continue;
-
-			if ( ! isset( $option['type'] ) )
-				continue;
-
-			$id = preg_replace( '/[^a-zA-Z0-9._\-]/', '', strtolower( $option['id'] ) );
-
-		// Set checkbox to false if it wasn't sent in the $_POST
-		if ( 'checkbox' == $option['type'] && ! isset( $input[$id] ) )
-			$input[$id] = 0;
-
-		// For a value to be submitted to database it must pass through a sanitization filter
-		if ( has_filter( 'geczy_sanitize_' . $option['type'] ) ) {
-			$clean[$id] = apply_filters( 'geczy_sanitize_' . $option['type'], $input[$id], $option );
+			return apply_filters('sf_options', $options);
 		}
 
-		endforeach;
+		public function validate_options( $input ) {
+			if ( !isset( $_POST['update'] ) )
+				return $this->get_defaults();
 
-		do_action( 'sf_options_updated', $clean );
-		add_settings_error( $this->id, 'save_options', __( 'Settings saved.', 'geczy' ), 'updated' );
-		return apply_filters( 'sf_options_on_update', $clean );
-	}
+			$clean = array();
+			$options = $this->options;
 
-	private function set_defaults() {
-		$options = $this->get_defaults();
-		update_option( $this->id . '_options', $options );
-	}
+			$tabname = $_POST['currentTab'];
 
-	private function get_defaults() {
-		$output = array();
-		$config = $this->options;
+			foreach ( $this->current_options as $id => $value ) :
+				$clean[$id] = $value;
+			endforeach;
 
-		foreach ( $config as $option ) {
-			if ( ! isset( $option['id'] ) || ! isset( $option['std'] ) || ! isset( $option['type'] ) )
-				continue;
+			foreach ( $this->tabs[$tabname] as $option ) :
 
+				if ( ! isset( $option['id'] ) )
+					continue;
+
+				if ( ! isset( $option['type'] ) )
+					continue;
+
+				$id = preg_replace( '/[^a-zA-Z0-9._\-]/', '', strtolower( $option['id'] ) );
+
+			// Set checkbox to false if it wasn't sent in the $_POST
+			if ( 'checkbox' == $option['type'] && ! isset( $input[$id] ) )
+				$input[$id] = 0;
+
+			// For a value to be submitted to database it must pass through a sanitization filter
 			if ( has_filter( 'geczy_sanitize_' . $option['type'] ) ) {
-				$output[$option['id']] = apply_filters( 'geczy_sanitize_' . $option['type'], $option['std'], $option );
+				$clean[$id] = apply_filters( 'geczy_sanitize_' . $option['type'], $input[$id], $option );
 			}
+
+			endforeach;
+
+			do_action( 'sf_options_updated', $clean );
+			add_settings_error( $this->id, 'save_options', __( 'Settings saved.', 'geczy' ), 'updated' );
+			return apply_filters( 'sf_options_on_update', $clean );
 		}
 
-		return $output;
-	}
-
-	private function template_header() {
-?>
-		<div class="wrap">
-			<?php screen_icon(); ?><h2><?php echo $this->title; ?></h2>
-
-			<h2 class="nav-tab-wrapper">
-				<?php echo $this->display_tabs(); ?>
-			</h2><?php
-
-		if ( !empty ( $_REQUEST['settings-updated'] ) )
-			settings_errors();
-
-	}
-
-	private function template_body() {
-
-		if ( empty( $this->options ) ) return false;
-
-		$options = $this->options;
-		$tabs = $this->get_tabs();
-		$tabname = !empty ( $_GET['tab'] ) ? $_GET['tab'] : $tabs[0]['slug'];
-
-		$options = apply_filters('sf_options_tab-' . $tabname, $this->tabs[$tabname]); ?>
-
-		<form method="post" action="options.php">
-			<?php settings_fields( $this->id . '_options_nonce' ); ?>
-			<table class="form-table">
-
-			<?php
-				foreach ( $options as $value ) :
-					SF_Format_Options::settings_options_format( $value );
-				endforeach;
-
-				do_action('sf_options_tab-' . $tabname);
-			?>
-
-			</table>
-
-			<p class="submit">
-				<input type="hidden" name="currentTab" value="<?php echo $tabname; ?>">
-				<input type="submit" name="update" class="button-primary" value="<?php echo sprintf( __( 'Save %s changes', 'geczy' ), $this->tab_headers[$tabname] ); ?>" />
-			</p>
-		</form> <?php
-
-	}
-
-	private function template_footer() {
-		echo '</div>';
-	}
-
-	public function init_settings_page() {
-
-		$this->template_header();
-		$this->template_body();
-		$this->template_footer();
-
-	}
-
-	private function get_tabs() {
-		$tabs = array();
-		foreach ( $this->options as $option ) {
-
-			if ( $option['type'] != 'heading' )
-				continue;
-
-			$option['slug'] = sanitize_title( $option['name'] );
-			unset($option['type']);
-
-			$tabs[] = $option;
-		}
-		return $tabs;
-	}
-
-	// Heading for Navigation
-	private function display_tabs() {
-		$tabs = $this->get_tabs();
-		$tabname = !empty ( $_GET['tab'] ) ? $_GET['tab'] : $tabs[0]['slug'];
-		$menu = '';
-
-		foreach ( $tabs as $tab ) {
-			$class = $tabname == $tab['slug'] ? 'nav-tab-active' : '';
-			$menu .= sprintf( '<a id="%s-tab" class="nav-tab %s" title="%s" href="?page=%s&tab=%s">%s</a>', $tab['slug'], $class, $tab['name'], $this->id, $tab['slug'], esc_html( $tab['name'] ) );
+		private function set_defaults() {
+			$options = $this->get_defaults();
+			update_option( $this->id . '_options', $options );
 		}
 
-		return $menu;
-	}
+		private function get_defaults() {
+			$output = array();
+			$config = $this->options;
 
-	public function update_option( $name, $value ) {
-		// Overwrite the key/value pair
-		$this->current_options = array($name => $value) + $this->current_options;
+			foreach ( $config as $option ) {
+				if ( ! isset( $option['id'] ) || ! isset( $option['std'] ) || ! isset( $option['type'] ) )
+					continue;
 
-		return update_option( $this->id .'_options', $this->current_options );
-	}
+				if ( has_filter( 'geczy_sanitize_' . $option['type'] ) ) {
+					$output[$option['id']] = apply_filters( 'geczy_sanitize_' . $option['type'], $option['std'], $option );
+				}
+			}
 
-	public function get_option( $name, $default = false ) {
-		return isset( $this->current_options[$name] ) ? $this->current_options[$name] : $default;
+			return $output;
+		}
+
+		private function template_header() {
+	?>
+			<div class="wrap">
+				<?php screen_icon(); ?><h2><?php echo $this->title; ?></h2>
+
+				<h2 class="nav-tab-wrapper">
+					<?php echo $this->display_tabs(); ?>
+				</h2><?php
+
+			if ( !empty ( $_REQUEST['settings-updated'] ) )
+				settings_errors();
+
+		}
+
+		private function template_body() {
+
+			if ( empty( $this->options ) ) return false;
+
+			$options = $this->options;
+			$tabs = $this->get_tabs();
+			$tabname = !empty ( $_GET['tab'] ) ? $_GET['tab'] : $tabs[0]['slug'];
+
+			$options = apply_filters('sf_options_tab-' . $tabname, $this->tabs[$tabname]); ?>
+
+			<form method="post" action="options.php">
+				<?php settings_fields( $this->id . '_options_nonce' ); ?>
+				<table class="form-table">
+
+				<?php
+					foreach ( $options as $value ) :
+						SF_Format_Options::settings_options_format( $value );
+					endforeach;
+
+					do_action('sf_options_tab-' . $tabname);
+				?>
+
+				</table>
+
+				<p class="submit">
+					<input type="hidden" name="currentTab" value="<?php echo $tabname; ?>">
+					<input type="submit" name="update" class="button-primary" value="<?php echo sprintf( __( 'Save %s changes', 'geczy' ), $this->tab_headers[$tabname] ); ?>" />
+				</p>
+			</form> <?php
+
+		}
+
+		private function template_footer() {
+			echo '</div>';
+		}
+
+		public function init_settings_page() {
+
+			$this->template_header();
+			$this->template_body();
+			$this->template_footer();
+
+		}
+
+		private function get_tabs() {
+			$tabs = array();
+			foreach ( $this->options as $option ) {
+
+				if ( $option['type'] != 'heading' )
+					continue;
+
+				$option['slug'] = sanitize_title( $option['name'] );
+				unset($option['type']);
+
+				$tabs[] = $option;
+			}
+			return $tabs;
+		}
+
+		// Heading for Navigation
+		private function display_tabs() {
+			$tabs = $this->get_tabs();
+			$tabname = !empty ( $_GET['tab'] ) ? $_GET['tab'] : $tabs[0]['slug'];
+			$menu = '';
+
+			foreach ( $tabs as $tab ) {
+				$class = $tabname == $tab['slug'] ? 'nav-tab-active' : '';
+				$menu .= sprintf( '<a id="%s-tab" class="nav-tab %s" title="%s" href="?page=%s&tab=%s">%s</a>', $tab['slug'], $class, $tab['name'], $this->id, $tab['slug'], esc_html( $tab['name'] ) );
+			}
+
+			return $menu;
+		}
+
+		public function update_option( $name, $value ) {
+			// Overwrite the key/value pair
+			$this->current_options = array($name => $value) + $this->current_options;
+
+			return update_option( $this->id .'_options', $this->current_options );
+		}
+
+		public function get_option( $name, $default = false ) {
+			return isset( $this->current_options[$name] ) ? $this->current_options[$name] : $default;
+		}
+
 	}
 
 }
