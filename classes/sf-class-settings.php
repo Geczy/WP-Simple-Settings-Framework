@@ -35,26 +35,37 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package     Framework
  * @subpackage  WP-Simple-Settings-Framework
- * @author      Matt Gates <info@mgates.me>
  * @copyright   2012 Matt Gates.
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link        http://mgates.me
  * @version     1.1
+ * @author      Matt Gates <info@mgates.me>
+ * @package     WordPress
  */
+
 
 if ( ! class_exists( 'SF_Settings_API' ) ) {
 
-	class SF_Settings_API {
+	class SF_Settings_API
+	{
 
 		private $data = array();
 
-		public function __construct( $id, $title, $menu = '', $file ) {
+		/**
+		 * Init
+		 *
+		 * @param string $id
+		 * @param string $title
+		 * @param string $menu  (optional)
+		 * @param string $file
+		 */
+		public function __construct( $id, $title, $menu = '', $file )
+		{
 			$this->assets_url = trailingslashit( plugins_url( 'assets/' , dirname( __FILE__ ) ) );
 			$this->id = $id;
 			$this->title = $title;
-			$this->menu = empty($menu) ? 'plugins.php' : $menu;
+			$this->menu = empty( $menu ) ? 'plugins.php' : $menu;
 
 			$this->file = $file;
 
@@ -70,13 +81,21 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 			}
 		}
 
+
 		// ==================================================================
 		//
 		// Getter and setter.
 		//
 		// ------------------------------------------------------------------
 
-		public function __set( $name, $value ) {
+		/**
+		 * Setter
+		 *
+		 * @param unknown $name
+		 * @param unknown $value
+		 */
+		public function __set( $name, $value )
+		{
 			if ( isset ( $this->data[$name] ) && is_array( $this->data[$name] ) ) {
 				$this->data[$name] = array_merge( $this->data[$name], $value );
 			} else {
@@ -84,23 +103,54 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 			}
 		}
 
-		public function __get( $name ) {
+
+		/**
+		 * Getter
+		 *
+		 * @param unknown $name
+		 * @return unknown
+		 */
+		public function __get( $name )
+		{
 			if ( array_key_exists( $name, $this->data ) ) {
 				return $this->data[$name];
 			}
 			return null;
 		}
 
-		public function __isset( $name ) {
+
+		/**
+		 * Isset
+		 *
+		 * @param unknown $name
+		 * @return unknown
+		 */
+		public function __isset( $name )
+		{
 			return isset( $this->data[$name] );
 		}
 
-		public function __unset( $name ) {
+
+		/**
+		 * Unset
+		 *
+		 * @param unknown $name
+		 */
+		public function __unset( $name )
+		{
 			unset( $this->data[$name] );
 		}
 
-		// Add a "Settings" link to the plugins.php page
-		public function add_settings_link( $links, $file ) {
+
+		/**
+		 * Add a "Settings" link to the plugins.php page
+		 *
+		 * @param array $links
+		 * @param array $file
+		 * @return array
+		 */
+		public function add_settings_link( $links, $file )
+		{
 			$this_plugin = plugin_basename( $this->file );
 			$page = strpos( $this->menu, '.php' ) ? $this->menu : 'admin.php';
 			if ( $file == $this_plugin ) {
@@ -110,27 +160,41 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 			return $links;
 		}
 
+
 		// ==================================================================
 		//
 		// Begin initialization.
 		//
 		// ------------------------------------------------------------------
 
-		private function includes() {
+		/**
+		 * Core files
+		 */
+		private function includes()
+		{
 			require_once dirname( __FILE__ ) . '/sf-class-sanitize.php';
 			require_once dirname( __FILE__ ) . '/sf-class-format-options.php';
 			new SF_Sanitize;
 		}
 
-		private function actions() {
+
+		/**
+		 * Hooks
+		 */
+		private function actions()
+		{
 			add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_scripts' ) );
 			add_action( 'admin_init', array( &$this, 'register_options' ) );
 			add_action( 'admin_menu', array( &$this, 'create_menu' ) );
 			add_filter( 'plugin_action_links', array( &$this, 'add_settings_link' ), 10, 2 );
 		}
 
-		/* Resources required on admin screen. */
-		public function admin_enqueue_scripts() {
+
+		/**
+		 * Admin scripts and styles
+		 */
+		public function admin_enqueue_scripts()
+		{
 			wp_register_script( 'bootstrap-tooltip' , $this->assets_url . 'js/bootstrap-tooltip.js' ,  array( 'jquery' ), '1.0' );
 			wp_register_script( 'select2' , $this->assets_url . 'js/select2/select2.min.js' ,  array( 'jquery' ), '1.0' );
 			wp_register_script( 'sf-scripts' , $this->assets_url . 'js/sf-jquery.js' ,  array( 'jquery' ), '1.0' );
@@ -138,7 +202,12 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 			wp_register_style( 'sf-styles' , $this->assets_url . 'css/sf-styles.css' );
 		}
 
-		public function admin_print_scripts() {
+
+		/**
+		 * Admin scripts and styles
+		 */
+		public function admin_print_scripts()
+		{
 			wp_enqueue_script( 'bootstrap-tooltip' );
 			wp_enqueue_script( 'select2' );
 			wp_enqueue_script( 'sf-scripts' );
@@ -146,16 +215,33 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 			wp_enqueue_style( 'sf-styles' );
 		}
 
-		public function register_options() {
+
+		/**
+		 * Register setting
+		 */
+		public function register_options()
+		{
 			register_setting( $this->id . '_options_nonce', $this->id . '_options', array( &$this, 'validate_options' ) );
 		}
 
-		public function create_menu() {
+
+		/**
+		 * Create menu
+		 */
+		public function create_menu()
+		{
 			$page = add_submenu_page( $this->menu, $this->title, $this->title, 'manage_options', $this->id, array( &$this, 'init_settings_page' ) );
 			add_action( 'admin_print_scripts-' . $page, array( &$this, 'admin_print_scripts' ) );
 		}
 
-		private function parse_options() {
+
+		/**
+		 * Parse options into tabbed organization
+		 *
+		 * @return array
+		 */
+		private function parse_options()
+		{
 			$options = $this->options;
 
 			foreach ( $options as $option ) {
@@ -177,19 +263,34 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 			return $tabs;
 		}
 
-		public function load_options($option_file) {
+
+		/**
+		 * Load the options array from a file
+		 *
+		 * @param string $option_file
+		 */
+		public function load_options( $option_file )
+		{
 			if ( !empty( $this->options ) ) return;
 
-				if ( file_exists($option_file) ) {
-					require $option_file;
-					$this->options = apply_filters('sf_options', $options);
-					$this->parse_options();
-				} else {
-					wp_die(__('Could not load settings at: ', 'geczy') . '<br/><code>' . $option_file . '</code>', __('Error - WP Settings Framework', 'geczy'));
-				}
+			if ( file_exists( $option_file ) ) {
+				require $option_file;
+				$this->options = apply_filters( 'sf_options', $options );
+				$this->parse_options();
+			} else {
+				wp_die( __( 'Could not load settings at: ', 'geczy' ) . '<br/><code>' . $option_file . '</code>', __( 'Error - WP Settings Framework', 'geczy' ) );
+			}
 		}
 
-		public function validate_options( $input ) {
+
+		/**
+		 * Sanitize and validate post fields
+		 *
+		 * @param unknown $input
+		 * @return unknown
+		 */
+		public function validate_options( $input )
+		{
 			if ( !isset( $_POST['update'] ) )
 				return $this->get_defaults();
 
@@ -225,15 +326,28 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 
 			do_action( 'sf_options_updated', $clean );
 			add_settings_error( $this->id, 'save_options', __( 'Settings saved.', 'geczy' ), 'updated' );
+
 			return apply_filters( 'sf_options_on_update', $clean );
 		}
 
-		private function set_defaults() {
+
+		/**
+		 * Create default options
+		 */
+		private function set_defaults()
+		{
 			$options = $this->get_defaults();
 			update_option( $this->id . '_options', $options );
 		}
 
-		private function get_defaults() {
+
+		/**
+		 * Retrieve default options
+		 *
+		 * @return array
+		 */
+		private function get_defaults()
+		{
 			$output = array();
 			$config = $this->options;
 
@@ -249,8 +363,13 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 			return $output;
 		}
 
-		private function template_header() {
-	?>
+
+		/**
+		 * HTML header
+		 */
+		private function template_header()
+		{
+?>
 			<div class="wrap">
 				<?php screen_icon(); ?><h2><?php echo $this->title; ?></h2>
 
@@ -263,7 +382,14 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 
 		}
 
-		private function template_body() {
+
+		/**
+		 * HTML body
+		 *
+		 * @return unknown
+		 */
+		private function template_body()
+		{
 
 			if ( empty( $this->options ) ) return false;
 
@@ -271,19 +397,19 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 			$tabs = $this->get_tabs();
 			$tabname = !empty ( $_GET['tab'] ) ? $_GET['tab'] : $tabs[0]['slug'];
 
-			$options = apply_filters('sf_options_tab-' . $tabname, $this->tabs[$tabname]); ?>
+			$options = apply_filters( 'sf_options_tab-' . $tabname, $this->tabs[$tabname] ); ?>
 
 			<form method="post" action="options.php">
 				<?php settings_fields( $this->id . '_options_nonce' ); ?>
 				<table class="form-table">
 
 				<?php
-					foreach ( $options as $value ) :
-						SF_Format_Options::settings_options_format( $value );
-					endforeach;
+			foreach ( $options as $value ) :
+				SF_Format_Options::settings_options_format( $value );
+			endforeach;
 
-					do_action('sf_options_tab-' . $tabname);
-				?>
+			do_action( 'sf_options_tab-' . $tabname );
+?>
 
 				</table>
 
@@ -295,11 +421,21 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 
 		}
 
-		private function template_footer() {
+
+		/**
+		 * HTML footer
+		 */
+		private function template_footer()
+		{
 			echo '</div>';
 		}
 
-		public function init_settings_page() {
+
+		/**
+		 * Create the settings page
+		 */
+		public function init_settings_page()
+		{
 
 			$this->template_header();
 			$this->template_body();
@@ -307,7 +443,14 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 
 		}
 
-		private function get_tabs() {
+
+		/**
+		 * Retrieve tabs
+		 *
+		 * @return array
+		 */
+		private function get_tabs()
+		{
 			$tabs = array();
 			foreach ( $this->options as $option ) {
 
@@ -315,15 +458,21 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 					continue;
 
 				$option['slug'] = sanitize_title( $option['name'] );
-				unset($option['type']);
+				unset( $option['type'] );
 
 				$tabs[] = $option;
 			}
 			return $tabs;
 		}
 
-		// Heading for Navigation
-		private function display_tabs() {
+
+		/**
+		 * Heading for navigation
+		 *
+		 * @return string
+		 */
+		private function display_tabs()
+		{
 			$tabs = $this->get_tabs();
 			$tabname = !empty ( $_GET['tab'] ) ? $_GET['tab'] : $tabs[0]['slug'];
 			$menu = '';
@@ -336,17 +485,37 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 			return $menu;
 		}
 
-		public function update_option( $name, $value ) {
+
+		/**
+		 * Update an option
+		 *
+		 * @param string $name
+		 * @param string $value
+		 * @return bool
+		 */
+		public function update_option( $name, $value )
+		{
 			// Overwrite the key/value pair
-			$this->current_options = array($name => $value) + $this->current_options;
+			$this->current_options = array( $name => $value ) + $this->current_options;
 
 			return update_option( $this->id .'_options', $this->current_options );
 		}
 
-		public function get_option( $name, $default = false ) {
+
+		/**
+		 * Get an option
+		 *
+		 * @param string $name
+		 * @param string $default (optional)
+		 * @return bool
+		 */
+		public function get_option( $name, $default = false )
+		{
 			return isset( $this->current_options[$name] ) ? $this->current_options[$name] : $default;
 		}
 
+
 	}
+
 
 }

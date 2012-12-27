@@ -2,22 +2,26 @@
 
 /**
  * Format an options array into HTML
+ *
+ * @author Matt Gates <http://mgates.me>
+ * @package WordPress
  */
 
-if ( ! class_exists('SF_Format_Options' ) ) {
+if ( ! class_exists( 'SF_Format_Options' ) ) {
 
 	class SF_Format_Options extends SF_Settings_API {
 
 		/**
 		 * Format an option array into HTML
 		 *
-		 * @param array   $value Single option array.
 		 *
 		 * @access public
 		 *
+		 * @param array   $value Single option array.
 		 * @return string HTML.
 		 */
-		public function settings_options_format( $value ) {
+		public function settings_options_format( $value )
+		{
 			if ( empty( $value ) ) return false;
 
 			$defaults = array(
@@ -194,10 +198,20 @@ if ( ! class_exists('SF_Format_Options' ) ) {
 
 		}
 
-		private function get_formatted_tip( $tip ) {
+
+		/**
+		 * Format a tooltip given a string
+		 *
+		 * @param string $tip
+		 * @return string
+		 */
+		private function get_formatted_tip( $tip )
+		{
 			return $tip ? sprintf( '<a href="#" title="%s" class="sf-tips" tabindex="99"></a>', $tip ) : '';
 		}
 
+
 	}
+
 
 }
