@@ -61,10 +61,7 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 			$this->includes();
 			$this->actions();
 
-			$this->options = $this->load_options();
 			$this->current_options = get_option( $this->id . '_options' );
-
-			$this->parse_options();
 
 			/* If the option has no saved data, load the defaults. */
 			/* @TODO: Can prob add this to the activation hook. */
@@ -180,12 +177,16 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 			return $tabs;
 		}
 
-		private function load_options() {
-			if ( empty( $this->options ) ) {
-				require_once dirname( dirname( __FILE__ ) ) . '/sf-options.php';
-			} else { $options = $this->options; }
+		public function load_options($option_file) {
+			if ( !empty( $this->options ) ) return;
 
-			return apply_filters('sf_options', $options);
+				if ( file_exists($option_file) ) {
+					require $option_file;
+					$this->options = apply_filters('sf_options', $options);
+					$this->parse_options();
+				} else {
+					wp_die(__('Could not load settings at: ', 'geczy') . '<br/><code>' . $option_file . '</code>', __('Error - WP Settings Framework', 'geczy'));
+				}
 		}
 
 		public function validate_options( $input ) {
