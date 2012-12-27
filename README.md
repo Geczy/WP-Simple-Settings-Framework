@@ -19,7 +19,8 @@ Installation
 	add_action( 'init', 'sf_load_settings' );
 	function sf_load_settings() {
 		require 'classes/sf-class-settings.php';
-		$settings_framework = new \Geczy\WPSettingsFramework\SF_Settings_API($id = 'my_plugin_name', $title = 'My Plugin Title', $menu = 'plugins.php', __FILE__);
+		$settings_framework = new SF_Settings_API($id = 'my_plugin_name', $title = 'My Plugin Title', $menu = 'plugins.php', __FILE__);
+		$settings_framework->load_options('path-to-sf_options.php');
 	}
 	```
 
