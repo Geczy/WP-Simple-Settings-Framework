@@ -479,7 +479,14 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 
 			foreach ( $tabs as $tab ) {
 				$class = $tabname == $tab['slug'] ? 'nav-tab-active' : '';
-				$menu .= sprintf( '<a id="%s-tab" class="nav-tab %s" title="%s" href="?page=%s&tab=%s">%s</a>', $tab['slug'], $class, $tab['name'], $this->id, $tab['slug'], esc_html( $tab['name'] ) );
+
+				$fields = array(
+					'page' => $this->id,
+					'tab'  => $tab['slug'],
+				);
+
+				$query = http_build_query(array_merge($_GET, $fields));
+				$menu .= sprintf( '<a id="%s-tab" class="nav-tab %s" title="%s" href="?%s">%s</a>', $tab['slug'], $class, $tab['name'], $query, esc_html( $tab['name'] ) );
 			}
 
 			return $menu;
