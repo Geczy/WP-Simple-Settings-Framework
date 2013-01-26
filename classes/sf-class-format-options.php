@@ -34,6 +34,7 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 				'css'         => '',
 				'type'        => 'text',
 				'std'         => '',
+				'select2'     => false,
 				'options'     => array(),
 				'restrict'    => array(),
 			);
@@ -158,7 +159,11 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 			);
 			echo wp_dropdown_pages( $args );
 			echo $description;
-			?><script type="text/javascript">jQuery(function() {jQuery("#<?php echo $id; ?>").select2({ width: '350px' });});</script><?php
+
+			if ( $select2 ) : ?>
+				<script type="text/javascript">jQuery(function() {jQuery("#<?php echo $id; ?>").select2({ width: '350px' });});</script>
+			<?php endif;
+
 			break;
 
 		case 'select':
@@ -177,8 +182,12 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 						</option>
 			<?php endforeach; ?>
 			</select>
-			<script type="text/javascript">jQuery(function() {jQuery("#<?php echo $id; ?>").select2({ width: '350px' });});</script>
-			<?php break;
+
+			<?php if ( $select2 ) : ?>
+				<script type="text/javascript">jQuery(function() {jQuery("#<?php echo $id; ?>").select2({ width: '350px' });});</script>
+			<?php endif;
+
+			break;
 
 		case 'textarea': ?>
 			<textarea name="<?php echo $name; ?>"
