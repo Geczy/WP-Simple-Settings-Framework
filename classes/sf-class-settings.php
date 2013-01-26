@@ -267,7 +267,7 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 
 			if ( file_exists( $option_file ) ) {
 				require $option_file;
-				$this->options = apply_filters( 'sf_options', $options );
+				$this->options = apply_filters( $this->id . '_options', $options );
 				$this->parse_options();
 
 				$this->current_options = get_option( $this->id . '_options' );
@@ -324,10 +324,10 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 
 			endforeach;
 
-			do_action( 'sf_options_updated', $clean );
+			do_action( $this->id . '_options_updated', $clean );
 			add_settings_error( $this->id, 'save_options', __( 'Settings saved.', 'geczy' ), 'updated' );
 
-			return apply_filters( 'sf_options_on_update', $clean );
+			return apply_filters( $this->id . '_options_on_update', $clean );
 		}
 
 
@@ -397,7 +397,7 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 			$tabs = $this->get_tabs();
 			$tabname = !empty ( $_GET['tab'] ) ? $_GET['tab'] : $tabs[0]['slug'];
 
-			$options = apply_filters( 'sf_options_tab-' . $tabname, $this->tabs[$tabname] ); ?>
+			$options = apply_filters( $this->id . '_options_tab-' . $tabname, $this->tabs[$tabname] ); ?>
 
 			<form method="post" action="options.php">
 				<?php settings_fields( $this->id . '_options_nonce' ); ?>
@@ -408,7 +408,7 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 				SF_Format_Options::settings_options_format( $value );
 			endforeach;
 
-			do_action( 'sf_options_tab-' . $tabname );
+			do_action( $this->id . '_options_tab-' . $tabname );
 ?>
 
 				</table>
