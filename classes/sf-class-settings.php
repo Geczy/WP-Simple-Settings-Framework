@@ -318,7 +318,6 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 
 			endforeach;
 
-
 			do_action( $this->id . '_options_updated', $clean );
 			add_settings_error( $this->id, 'save_options', __( 'Settings saved.', 'geczy' ), 'updated' );
 
@@ -513,7 +512,7 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 		 */
 		public function get_option( $name, $default = false )
 		{
-			return isset( $this->current_options[$name] ) ? $this->current_options[$name] : $default;
+			return isset( $this->current_options[$name] ) ? maybe_unserialize( $this->current_options[$name] ) : $default;
 		}
 
 
