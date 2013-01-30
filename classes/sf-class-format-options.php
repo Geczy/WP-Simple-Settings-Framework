@@ -20,9 +20,9 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 		 * @param array   $value Single option array.
 		 * @return string HTML.
 		 */
-		public function settings_options_format( $value )
+		public function settings_options_format( $setting )
 		{
-			if ( empty( $value ) ) return false;
+			if ( empty( $setting ) ) return false;
 
 			$defaults = array(
 				'name'        => '',
@@ -41,7 +41,7 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 			);
 
 			/* Each to it's own variable for slim-ness' sakes. */
-			extract( shortcode_atts( $defaults, $value ) );
+			extract( shortcode_atts( $defaults, $setting ) );
 
 			$restrict_defaults = array(
 				'min'  => 0,
