@@ -35,6 +35,7 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 				'type'        => 'text',
 				'std'         => '',
 				'select2'     => false,
+				'multiple'    => false,
 				'options'     => array(),
 				'restrict'    => array(),
 			);
@@ -51,7 +52,14 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 			$restrict = shortcode_atts( $restrict_defaults, $restrict );
 
 			$value   = $this->get_option( $id );
-			$value   = $value !== false ? esc_attr ( $value ) : false;
+			$value   = $value !== false ? maybe_unserialize( $value ) : false;
+
+			// Sanitize the value
+			if ( is_array($value)) {
+				foreach ($value as $key => $output) {
+					$value[$key] = esc_attr($output);
+				}
+			} else { $value = esc_attr($value); }
 
 			$title   = $name;
 			$name    = $this->id . "_options[{$id}]";
@@ -173,11 +181,12 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 			<select id="<?php echo $id; ?>"
 					  class="<?php echo $class; ?>"
 					  style="<?php echo $css; ?>"
-					  name="<?php echo $name; ?>"
+					  name="<?php echo $name; ?><?php echo $multiple ? '[]' : ''; ?>"
+					  <?php echo $multiple ? 'multiple="multiple"' : ''; ?>
 					  >
 
 			<?php foreach ( $options as $key => $val ) : ?>
-						<option value="<?php echo $key; ?>" <?php selected( $selected, $key, true ); ?>>
+						<option value="<?php echo $key; ?>" <?php self::selected( $selected, $key ); ?>>
 						<?php echo $val; ?>
 						</option>
 			<?php endforeach; ?>
@@ -207,6 +216,14 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 			/* Footer of the option. */
 			if ( $type != 'heading' || $type != 'title' ) echo '</td></tr>';
 
+		}
+
+		private function selected($haystack, $current) {
+
+			if(is_array($haystack) && in_array($current, $haystack)) {
+				$current = $haystack = 1;
+			}
+			selected($haystack, $current);
 		}
 
 

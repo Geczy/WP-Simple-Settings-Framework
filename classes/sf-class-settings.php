@@ -294,14 +294,8 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 			if ( !isset( $_POST['update'] ) )
 				return $this->get_defaults();
 
-			$clean = array();
-			$options = $this->options;
-
+			$clean = $this->current_options;
 			$tabname = $_POST['currentTab'];
-
-			foreach ( $this->current_options as $id => $value ) :
-				$clean[$id] = $value;
-			endforeach;
 
 			foreach ( $this->tabs[$tabname] as $option ) :
 
@@ -311,18 +305,19 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 				if ( ! isset( $option['type'] ) )
 					continue;
 
-				$id = preg_replace( '/[^a-zA-Z0-9._\-]/', '', strtolower( $option['id'] ) );
+				$id = sanitize_text_field( strtolower( $option['id'] ) );
 
-			// Set checkbox to false if it wasn't sent in the $_POST
-			if ( 'checkbox' == $option['type'] && ! isset( $input[$id] ) )
-				$input[$id] = 0;
+				// Set checkbox to false if it wasn't sent in the $_POST
+				if ( 'checkbox' == $option['type'] && ! isset( $input[$id] ) )
+					$input[$id] = 0;
 
-			// For a value to be submitted to database it must pass through a sanitization filter
-			if ( has_filter( 'geczy_sanitize_' . $option['type'] ) ) {
-				$clean[$id] = apply_filters( 'geczy_sanitize_' . $option['type'], $input[$id], $option );
-			}
+				// For a value to be submitted to database it must pass through a sanitization filter
+				if ( has_filter( 'geczy_sanitize_' . $option['type'] ) ) {
+					$clean[$id] = apply_filters( 'geczy_sanitize_' . $option['type'], $input[$id], $option );
+				}
 
 			endforeach;
+
 
 			do_action( $this->id . '_options_updated', $clean );
 			add_settings_error( $this->id, 'save_options', __( 'Settings saved.', 'geczy' ), 'updated' );

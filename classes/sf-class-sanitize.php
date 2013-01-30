@@ -78,7 +78,19 @@ if ( ! class_exists( 'SF_Sanitize' ) ) {
 		 */
 		public function sanitize_enum( $input, $option )
 		{
-			$output = array_key_exists( $input, $option['options'] ) ? $input : false;
+			$output = $input;
+
+			if ( is_array( $input ) ) {
+				foreach ($input as $value) {
+					if ( !$this->sanitize_enum( $value, $option ) ) {
+						$output = false;
+					}
+				}
+				$output = $output ? serialize($output) : $output;
+			} else {
+				$output = array_key_exists( $input, $option['options'] ) ? $input : false;
+			}
+
 			return $output;
 		}
 
