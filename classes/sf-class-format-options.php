@@ -138,15 +138,18 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 			<?php echo $description;
 			break;
 
-		case 'radio': ?>
-			<?php foreach ( $options as $key => $val ) : ?>
+		case 'radio':
+
+			$selected = ( $value !== false ) ? $value : $std;
+
+			foreach ( $options as $key => $val ) : ?>
 						<label class="radio">
 						<input type="radio"
 							   name="<?php echo $name; ?>"
 							   id="<?php echo $key; ?>"
 							   value="<?php echo $key; ?>"
 							   class="<?php echo $class; ?>"
-								<?php if ( $value !== false ) echo checked( $value, $key, false ); else echo checked( $std, $key, false ); ?>
+								<?php checked( $selected, $key ); ?>
 						/>
 						<?php echo $val; ?>
 						</label><br />
