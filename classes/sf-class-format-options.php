@@ -127,7 +127,10 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 			<?php echo $description;
 			break;
 
-		case 'checkbox': ?>
+		case 'checkbox':
+
+			$selected = ( $value !== false ) ? $value : $std;
+
 			if ( $multiple ) :
 
 				foreach ($options as $key => $desc) : ?>
@@ -149,14 +152,16 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 				endforeach;
 
 			else : ?>
+
 			<input name="<?php echo $name; ?>"
-					 id="<?php echo $id; ?>"
+					 id="<?php echo $id ?>"
 					 type="checkbox"
 					 class="<?php echo $class; ?>"
 					 style="<?php echo $css; ?>"
-					 <?php if ( $value !== false ) echo checked( $value, 1, false ); else echo checked( $std, 1, false ); ?>
+					 <?php checked( $selected, 1 ); ?>
 					 />
 			<?php echo $description;
+			endif;
 			break;
 
 		case 'radio':
@@ -242,11 +247,12 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 
 		}
 
-		private function selected($haystack, $current) {
+		private function selected( $haystack, $current ) {
 
-			if(is_array($haystack) && in_array($current, $haystack)) {
+			if ( is_array( $haystack ) && in_array( $current, $haystack ) ) {
 				$current = $haystack = 1;
 			}
+
 			selected($haystack, $current);
 		}
 
@@ -258,6 +264,7 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 
 			checked($haystack, $current);
 		}
+
 
 		/**
 		 * Format a tooltip given a string
