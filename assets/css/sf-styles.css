@@ -1,10 +1,4 @@
-a.sf-tips {
-	height: 16px;
-	width: 16px;
-	margin-top: 0.2em;
-	float: right;
-	background: url(../img/tip.png) no-repeat top left;
-}
+a.sf-tips {height: 16px;width: 16px;margin-top: 0.2em;float: right;background: url(../img/tip.png) no-repeat top left;}
 
 /*!
  * Bootstrap v2.1.1 [Styles for Tooltips]
