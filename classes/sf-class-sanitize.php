@@ -22,7 +22,7 @@ if ( ! class_exists( 'SF_Sanitize' ) ) {
 			add_filter( 'geczy_sanitize_text', 'sanitize_text_field' );
 			add_filter( 'geczy_sanitize_number', array( $this, 'sanitize_number_field' ) );
 			add_filter( 'geczy_sanitize_textarea', array( $this, 'sanitize_textarea' ) );
-			add_filter( 'geczy_sanitize_checkbox', array( $this, 'sanitize_checkbox' ) );
+			add_filter( 'geczy_sanitize_checkbox', array( $this, 'sanitize_checkbox' ), 10, 2 );
 			add_filter( 'geczy_sanitize_radio', array( $this, 'sanitize_enum' ), 10, 2 );
 			add_filter( 'geczy_sanitize_select', array( $this, 'sanitize_enum' ), 10, 2 );
 			add_filter( 'geczy_sanitize_single_select_page', array( $this, 'sanitize_select_pages' ), 10, 2 );
@@ -62,9 +62,27 @@ if ( ! class_exists( 'SF_Sanitize' ) ) {
 		 * @param int     $input
 		 * @return int
 		 */
-		public function sanitize_checkbox( $input )
+		public function sanitize_checkbox( $input, $option )
 		{
-			$output = $input ? 1 : 0;
+			if ( !empty($option['multiple']) ) {
+
+				$defaults = array_keys( $option['options'] );
+
+				foreach ( $defaults as $value ) {
+
+					if ( !is_array($input) ) {
+						$output[$value] = 0;
+					} else {
+						$output[$value] = in_array( $value, $input ) ? 1 : 0;
+					}
+
+				}
+
+				$output = serialize($output);
+			} else {
+				$output = $input ? 1 : 0;
+			}
+
 			return $output;
 		}
 
@@ -84,6 +102,7 @@ if ( ! class_exists( 'SF_Sanitize' ) ) {
 				foreach ($input as $value) {
 					if ( !$this->sanitize_enum( $value, $option ) ) {
 						$output = false;
+						break;
 					}
 				}
 				$output = $output ? serialize($output) : $output;

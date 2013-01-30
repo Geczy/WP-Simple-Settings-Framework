@@ -128,6 +128,27 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 			break;
 
 		case 'checkbox': ?>
+			if ( $multiple ) :
+
+				foreach ($options as $key => $desc) : ?>
+
+					<input name="<?php echo $name; ?><?php echo $multiple ? '[]' : ''; ?>"
+							 id="<?php echo $id . '_' . $key; ?>"
+							 type="checkbox"
+							 class="<?php echo $class; ?>"
+							 style="<?php echo $css; ?>"
+							 value="<?php echo $key; ?>"
+							 <?php self::checked( $value, $key ); ?>
+							 />
+						<label for="<?php echo $id . '_' . $key; ?>">
+							<?php echo $desc; ?>
+						</label>
+						<br/>
+					<?php
+
+				endforeach;
+
+			else : ?>
 			<input name="<?php echo $name; ?>"
 					 id="<?php echo $id; ?>"
 					 type="checkbox"
@@ -229,6 +250,14 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 			selected($haystack, $current);
 		}
 
+		private function checked( $haystack, $current ) {
+
+			if ( is_array( $haystack ) && !empty( $haystack[$current] ) ) {
+				$current = $haystack = 1;
+			}
+
+			checked($haystack, $current);
+		}
 
 		/**
 		 * Format a tooltip given a string
