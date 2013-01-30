@@ -183,7 +183,9 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 			<?php endforeach; ?>
 			</select>
 
-			<?php if ( $select2 ) : ?>
+			<?php echo $description;
+
+			if ( $select2 ) : ?>
 				<script type="text/javascript">jQuery(function() {jQuery("#<?php echo $id; ?>").select2({ width: '350px' });});</script>
 			<?php endif;
 
