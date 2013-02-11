@@ -204,19 +204,17 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 
 		case 'select':
 
-			$selected = ( $value !== false ) ? $value : $std; ?>
+			$selected = ( $value !== false ) ? $value : $std;
+			$options = apply_filters( $this->id . '_select_options', $options, $setting ); ?>
 
 			<select id="<?php echo $id; ?>"
 					  class="<?php echo $class; ?>"
 					  style="<?php echo $css; ?>"
 					  name="<?php echo $name; ?><?php echo $multiple ? '[]' : ''; ?>"
-					  <?php echo $multiple ? 'multiple="multiple"' : ''; ?>
-					  >
+					  <?php echo $multiple ? 'multiple="multiple"' : ''; ?>>
 
 			<?php foreach ( $options as $key => $val ) : ?>
-						<option value="<?php echo $key; ?>" <?php self::selected( $selected, $key ); ?>>
-						<?php echo $val; ?>
-						</option>
+						<option value="<?php echo $key; ?>" <?php self::selected( $selected, $key ); ?>><?php echo $val; ?></option>
 			<?php endforeach; ?>
 			</select>
 

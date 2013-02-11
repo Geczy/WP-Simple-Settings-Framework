@@ -315,6 +315,10 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 				if ( ! isset( $option['type'] ) )
 					continue;
 
+				if ( $option['type'] == 'select' ) {
+					$option['options'] = apply_filters( $this->id . '_select_options', $option['options'], $option );
+				}
+
 				$id = sanitize_text_field( strtolower( $option['id'] ) );
 
 				// Set checkbox to false if it wasn't sent in the $_POST
