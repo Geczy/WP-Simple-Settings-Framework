@@ -193,11 +193,15 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 				'echo'       => 0,
 				'selected'   => $selected
 			);
-			echo wp_dropdown_pages( $args );
+
+			echo str_replace("'>", "'><option></option>", wp_dropdown_pages( $args ));
+
 			echo $description;
+			?><script type="text/javascript">jQuery(function() {jQuery("#<?php echo $id; ?>").select2({ allowClear: true, placeholder: "<?php _e('Select a page...', 'wc_product_vendor'); ?>", width: '350px' });});</script><?php
+ 			break;
 
 			if ( $select2 ) : ?>
-				<script type="text/javascript">jQuery(function() {jQuery("#<?php echo $id; ?>").select2({ width: '350px' });});</script>
+				<script type="text/javascript">jQuery(function() {jQuery("#<?php echo $id; ?>").select2({ allowClear: true, placeholder: "<?php _e('Select a page...', 'geczy'); ?>", width: '350px' });});</script>
 			<?php endif;
 
 			break;
