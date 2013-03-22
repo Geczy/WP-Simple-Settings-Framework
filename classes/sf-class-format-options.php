@@ -54,12 +54,13 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 			$value   = $this->get_option( $id );
 			$value   = $value !== false ? maybe_unserialize( $value ) : false;
 
+
 			// Sanitize the value
 			if ( is_array($value)) {
 				foreach ($value as $key => $output) {
 					$value[$key] = esc_attr($output);
 				}
-			} else { $value = esc_attr($value); }
+			} else if ( $value !== false ) { $value = esc_attr($value); }
 
 			$title   = $name;
 			$name    = $this->id . "_options[{$id}]";
