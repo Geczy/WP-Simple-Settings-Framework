@@ -59,9 +59,10 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 			// Sanitize the value
 			if ( is_array($value)) {
 				foreach ($value as $key => $output) {
-					$value[$key] = esc_attr($output);
+					if ($type != 'wysiwyg')
+						$value[$key] = esc_attr($output);
 				}
-			} else if ( $value !== false ) { $value = esc_attr($value); }
+			} else if ( $value !== false && $type != 'wysiwyg') { $value = esc_attr($value); }
 
 			$title   = $name;
 			$name    = $this->id . "_options[{$id}]";
