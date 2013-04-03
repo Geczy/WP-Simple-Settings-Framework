@@ -243,10 +243,11 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 					<?php echo $description;
 			break;
 
-		case 'wysiwyg': ?>
+		case 'wysiwyg': 
 		
-			<?php wp_editor( $value, $id, $settings ); ?>
-			<?php echo $description;
+			$settings['textarea_name'] = $name; // Must at least have the textarea_name set for values to be saved
+			wp_editor( $value, $id, $settings );
+			echo $description;
 			break;
 
 		endswitch;
