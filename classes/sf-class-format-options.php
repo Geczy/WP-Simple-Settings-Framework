@@ -38,6 +38,7 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 				'multiple'    => false,
 				'options'     => array(),
 				'restrict'    => array(),
+				'settings'	  => array()
 			);
 
 			/* Each to it's own variable for slim-ness' sakes. */
@@ -240,6 +241,12 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 								rows="3"
 					  ><?php echo ( $value !== false ) ? $value : $std; ?></textarea>
 					<?php echo $description;
+			break;
+
+		case 'wysiwyg': ?>
+		
+			<?php wp_editor( $value, $id, $settings ); ?>
+			<?php echo $description;
 			break;
 
 		endswitch;
