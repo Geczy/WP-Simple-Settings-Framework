@@ -511,7 +511,7 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 		public function update_option( $name, $value )
 		{
 			// Overwrite the key/value pair
-			$this->current_options = array( $name => $value ) + $this->current_options;
+			$this->current_options = array( $name => $value ) + (array) $this->current_options;
 
 			return update_option( $this->id .'_options', $this->current_options );
 		}
