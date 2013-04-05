@@ -55,10 +55,10 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 		/**
 		 * Init
 		 *
-		 * @param string $id
-		 * @param string $title
-		 * @param string $menu  (optional)
-		 * @param string $file
+		 * @param string  $id
+		 * @param string  $title
+		 * @param string  $menu  (optional)
+		 * @param string  $file
 		 */
 		public function __construct( $id, $title, $menu = '', $file )
 		{
@@ -137,8 +137,8 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 		/**
 		 * Add a "Settings" link to the plugins.php page
 		 *
-		 * @param array $links
-		 * @param array $file
+		 * @param array   $links
+		 * @param array   $file
 		 * @return array
 		 */
 		public function add_settings_link( $links, $file )
@@ -259,7 +259,7 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 		/**
 		 * Load the options array from a file
 		 *
-		 * @param string $option_file
+		 * @param string  $option_file
 		 */
 		public function load_options( $option_file )
 		{
@@ -274,20 +274,28 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 
 				/* If the option has no saved data, load the defaults. */
 				/* @TODO: Can prob add this to the activation hook. */
-				if ( !$this->current_options ) {
-					$this->set_defaults();
-				}
+				$this->set_defaults( $this->current_options );
 			} else {
 				wp_die( __( 'Could not load settings at: ', 'geczy' ) . '<br/><code>' . $option_file . '</code>', __( 'Error - WP Settings Framework', 'geczy' ) );
 			}
 		}
 
-		public function get_current_options() {
+
+		/**
+		 *
+		 *
+		 * @return unknown
+		 */
+		public function get_current_options()
+		{
 			if ( !empty( $this->current_options ) )
 				return $this->current_options;
 
 			$options = get_option( $this->id . '_options' );
-			$options = array_map( 'maybe_unserialize', $options );
+
+			if ( $options ) {
+				$options = array_map( 'maybe_unserialize', $options );
+			}
 
 			return $options;
 		}
@@ -319,56 +327,79 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 					$option['options'] = apply_filters( $this->id . '_select_options', $option['options'], $option );
 				}
 
-				$id = sanitize_text_field( strtolower( $option['id'] ) );
+			$id = sanitize_text_field( strtolower( $option['id'] ) );
 
-				// Set checkbox to false if it wasn't sent in the $_POST
-				if ( 'checkbox' == $option['type'] && ! isset( $input[$id] ) )
-					$input[$id] = 0;
+			// Set checkbox to false if it wasn't sent in the $_POST
+			if ( 'checkbox' == $option['type'] && ! isset( $input[$id] ) )
+				$input[$id] = 0;
 
-				// For a value to be submitted to database it must pass through a sanitization filter
-				if ( has_filter( 'geczy_sanitize_' . $option['type'] ) ) {
-					$clean[$id] = apply_filters( 'geczy_sanitize_' . $option['type'], $input[$id], $option );
-				}
+			// For a value to be submitted to database it must pass through a sanitization filter
+			if ( has_filter( 'geczy_sanitize_' . $option['type'] ) ) {
+				$clean[$id] = apply_filters( 'geczy_sanitize_' . $option['type'], $input[$id], $option );
+			}
 
 			endforeach;
 
-			do_action( $this->id . '_options_updated', $clean );
+			do_action( $this->id . '_options_updated', $clean, $tabname );
 			add_settings_error( $this->id, 'save_options', __( 'Settings saved.', 'geczy' ), 'updated' );
 
-			return apply_filters( $this->id . '_options_on_update', $clean );
+			return apply_filters( $this->id . '_options_on_update', $clean, $tabname );
 		}
 
 
 		/**
 		 * Create default options
+		 *
+		 * @param unknown $current_options (optional)
 		 */
-		private function set_defaults()
+		private function set_defaults( $current_options = array() )
 		{
-			$options = $this->get_defaults();
-			update_option( $this->id . '_options', $options );
+			$options = $this->get_defaults( $current_options );
+			if ( $options ) {
+				update_option( $this->id . '_options', $options );
+			}
 		}
 
 
 		/**
 		 * Retrieve default options
 		 *
+		 * @param unknown $currents (optional)
 		 * @return array
 		 */
-		private function get_defaults()
+		private function get_defaults( $currents = array() )
 		{
 			$output = array();
 			$config = $this->options;
+			$flag = false;
+
+			if ( $currents ) {
+				foreach ( $config as $value ) {
+					if ( ! isset( $value['id'] ) || ! isset( $value['std'] ) || ! isset( $value['type'] ) )
+						continue;
+
+					if ( ! isset( $currents[$value['id']] ) ) {
+						$flag = true;
+					}
+				}
+			}
 
 			foreach ( $config as $option ) {
 				if ( ! isset( $option['id'] ) || ! isset( $option['std'] ) || ! isset( $option['type'] ) )
 					continue;
 
-				if ( has_filter( 'geczy_sanitize_' . $option['type'] ) ) {
-					$output[$option['id']] = apply_filters( 'geczy_sanitize_' . $option['type'], $option['std'], $option );
-				}
+				if ( $currents && isset( $currents[$option['id']] ) ) {
+					$output[$option['id']] = $currents[$option['id']];
+				} else if ( has_filter( 'geczy_sanitize_' . $option['type'] ) ) {
+						$output[$option['id']] = apply_filters( 'geczy_sanitize_' . $option['type'], $option['std'], $option );
+					}
 			}
 
-			return $output;
+			if ( $currents ) {
+				$output = array_merge( $currents, $output );
+			}
+
+			return ! $flag && $currents ? array() : $output;
 		}
 
 
@@ -493,7 +524,7 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 					'tab'  => $tab['slug'],
 				);
 
-				$query = http_build_query(array_merge($_GET, $fields));
+				$query = http_build_query( array_merge( $_GET, $fields ) );
 				$menu .= sprintf( '<a id="%s-tab" class="nav-tab %s" title="%s" href="?%s">%s</a>', $tab['slug'], $class, $tab['name'], $query, esc_html( $tab['name'] ) );
 			}
 
@@ -504,8 +535,8 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 		/**
 		 * Update an option
 		 *
-		 * @param string $name
-		 * @param string $value
+		 * @param string  $name
+		 * @param string  $value
 		 * @return bool
 		 */
 		public function update_option( $name, $value )
@@ -520,8 +551,8 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 		/**
 		 * Get an option
 		 *
-		 * @param string $name
-		 * @param string $default (optional)
+		 * @param string  $name
+		 * @param string  $default (optional)
 		 * @return bool
 		 */
 		public function get_option( $name, $default = false )
