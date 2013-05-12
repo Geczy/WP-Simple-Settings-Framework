@@ -110,7 +110,14 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 	<?php switch ( $type ) :
 
 		case 'text'   :
-		case 'number' : ?>
+		case 'color'  :
+		case 'number' :
+			if ( $type == 'color' ) {
+				$type = 'text';
+				$class .= ' colorpick';
+				$description .= '<div id="colorPickerDiv_' . esc_attr( $value['id'] ) . '" class="colorpickdiv" style="z-index: 100;background:#eee;border:1px solid #ccc;position:absolute;display:none;"></div>';
+			}
+		?>
 			<input name="<?php echo $name; ?>"
 				 id="<?php echo $id; ?>"
 				 type="<?php echo $type; ?>"
@@ -200,7 +207,7 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 			echo str_replace("'>", "'><option></option>", wp_dropdown_pages( $args ));
 
 			echo $description;
-			?><script type="text/javascript">jQuery(function() {jQuery("#<?php echo $id; ?>").select2({ allowClear: true, placeholder: "<?php _e('Select a page...', 'wc_product_vendor'); ?>", width: '350px' });});</script><?php
+			?><script type="text/javascript">jQuery(function() {jQuery("#<?php echo $id; ?>").select2({ allowClear: true, placeholder: "<?php _e('Select a page...', 'geczy'); ?>", width: '350px' });});</script><?php
  			break;
 
 			if ( $select2 ) : ?>
@@ -252,6 +259,24 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 			break;
 
 		endswitch;
+
+		?>
+		<script type="text/javascript">
+		jQuery(window).load(function() {
+			// Color picker
+			jQuery('.colorpick').each(function(){
+				jQuery('.colorpickdiv', jQuery(this).parent()).farbtastic(this);
+				jQuery(this).click(function() {
+					if ( jQuery(this).val() == "" ) jQuery(this).val('#');
+					jQuery('.colorpickdiv', jQuery(this).parent() ).show();
+				});
+			});
+			jQuery(document).mousedown(function(){
+				jQuery('.colorpickdiv').hide();
+			});
+		})
+		</script>
+		<?php
 
 			/* Footer of the option. */
 			if ( !in_array( $type, $header_types ) ) echo '</td></tr>';

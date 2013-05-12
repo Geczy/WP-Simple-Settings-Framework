@@ -19,6 +19,7 @@ if ( ! class_exists( 'SF_Sanitize' ) ) {
 		 */
 		function __construct()
 		{
+			add_filter( 'geczy_sanitize_color', 'sanitize_text_field' );
 			add_filter( 'geczy_sanitize_text', 'sanitize_text_field' );
 			add_filter( 'geczy_sanitize_number', array( $this, 'sanitize_number_field' ) );
 			add_filter( 'geczy_sanitize_textarea', array( $this, 'sanitize_textarea' ) );

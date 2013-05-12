@@ -203,8 +203,11 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 			wp_enqueue_script( 'bootstrap-tooltip' );
 			wp_enqueue_script( 'select2' );
 			wp_enqueue_script( 'sf-scripts' );
+			wp_enqueue_script( 'farbtastic' );
+
 			wp_enqueue_style( 'select2' );
 			wp_enqueue_style( 'sf-styles' );
+			wp_enqueue_style( 'farbtastic' );
 		}
 
 
