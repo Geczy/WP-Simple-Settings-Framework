@@ -7,6 +7,7 @@
  * @package WordPress
  */
 
+
 if ( ! class_exists( 'SF_Format_Options' ) ) {
 
 	class SF_Format_Options extends SF_Settings_API {
@@ -17,7 +18,7 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 		 *
 		 * @access public
 		 *
-		 * @param array   $value Single option array.
+		 * @param unknown $setting
 		 * @return string HTML.
 		 */
 		public function settings_options_format( $setting )
@@ -25,21 +26,21 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 			if ( empty( $setting ) ) return false;
 
 			$defaults = apply_filters( $this->id . '_options_defaults', array(
-				'name'        => '',
-				'desc'        => '',
-				'placeholder' => '',
-				'class'       => '',
-				'tip'         => '',
-				'id'          => '',
-				'css'         => '',
-				'type'        => 'text',
-				'std'         => '',
-				'select2'     => false,
-				'multiple'    => false,
-				'options'     => array(),
-				'restrict'    => array(),
-				'settings'	  => array()
-			) );
+					'name'        => '',
+					'desc'        => '',
+					'placeholder' => '',
+					'class'       => '',
+					'tip'         => '',
+					'id'          => '',
+					'css'         => '',
+					'type'        => 'text',
+					'std'         => '',
+					'select2'     => false,
+					'multiple'    => false,
+					'options'     => array(),
+					'restrict'    => array(),
+					'settings'   => array()
+				) );
 
 			// Each to it's own variable for slim-ness' sakes.
 			$setting = shortcode_atts( $defaults, $setting );
@@ -70,11 +71,11 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 				? '<br /><small>' . $desc . '</small>'
 				: '<label for="' . $id . '"> ' .$desc . '</label>';
 
-			$description = ( ( in_array($type, $header_types) || $type == 'radio' ) && !empty( $desc ) )
+			$description = ( ( in_array( $type, $header_types ) || $type == 'radio' ) && !empty( $desc ) )
 				? '<p>' . $desc . '</p>'
 				: $description;
 
-			?>
+?>
 
 			<?php if ( !in_array( $type, $header_types ) ) : ?>
 			<!-- Header of the option. -->
@@ -91,7 +92,7 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 				<td <?php echo $grouped; ?> >
 			<?php endif; ?>
 
-		<?php foreach ($header_types as $header) :
+		<?php foreach ( $header_types as $header ) :
 				if ( $type != $header ) continue; ?>
 					<tr>
 						<th scope="col" colspan="2">
@@ -103,15 +104,15 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 
 	<?php switch ( $type ) :
 
-		case 'text'   :
-		case 'color'  :
-		case 'number' :
-			if ( $type == 'color' ) {
-				$type = 'text';
-				$class .= ' colorpick';
-				$description .= '<div id="colorPickerDiv_' . esc_attr( $value['id'] ) . '" class="colorpickdiv" style="z-index: 100;background:#eee;border:1px solid #ccc;position:absolute;display:none;"></div>';
-			}
-		?>
+			case 'text'   :
+			case 'color'  :
+			case 'number' :
+				if ( $type == 'color' ) {
+					$type = 'text';
+					$class .= ' colorpick';
+					$description .= '<div id="colorPickerDiv_' . esc_attr( $value['id'] ) . '" class="colorpickdiv" style="z-index: 100;background:#eee;border:1px solid #ccc;position:absolute;display:none;"></div>';
+				}
+?>
 			<input name="<?php echo $name; ?>"
 				 id="<?php echo $id; ?>"
 				 type="<?php echo $type; ?>"
@@ -136,7 +137,7 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 
 			if ( $multiple ) :
 
-				foreach ($options as $key => $desc) : ?>
+				foreach ( $options as $key => $desc ) : ?>
 
 					<input name="<?php echo $name; ?><?php echo $multiple ? '[]' : ''; ?>"
 							 id="<?php echo $id . '_' . $key; ?>"
@@ -152,7 +153,7 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 						<br/>
 					<?php
 
-				endforeach;
+			endforeach;
 
 			else : ?>
 
@@ -198,12 +199,12 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 				'selected'   => $selected
 			);
 
-			echo str_replace("'>", "'><option></option>", wp_dropdown_pages( $args ));
+			echo str_replace( "'>", "'><option></option>", wp_dropdown_pages( $args ) );
 
 			echo $description;
 
 			if ( $select2 ) : ?>
-				<script type="text/javascript">jQuery(function() {jQuery("#<?php echo $id; ?>").select2({ allowClear: true, placeholder: "<?php _e('Select a page...', 'geczy'); ?>", width: '350px' });});</script>
+				<script type="text/javascript">jQuery(function() {jQuery("#<?php echo $id; ?>").select2({ allowClear: true, placeholder: "<?php _e( 'Select a page...', 'geczy' ); ?>", width: '350px' });});</script>
 			<?php endif;
 
 			break;
@@ -252,9 +253,9 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 			do_action( $this->id . '_options_type_' . $type, $setting );
 			break;
 
-		endswitch;
+			endswitch;
 
-		?>
+?>
 		<script type="text/javascript">
 		jQuery(window).load(function() {
 			// Color picker
@@ -277,29 +278,45 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 
 		}
 
-		private function selected( $haystack, $current ) {
+
+		/**
+		 *
+		 *
+		 * @param unknown $haystack
+		 * @param unknown $current
+		 */
+		private function selected( $haystack, $current )
+		{
 
 			if ( is_array( $haystack ) && in_array( $current, $haystack ) ) {
 				$current = $haystack = 1;
 			}
 
-			selected($haystack, $current);
+			selected( $haystack, $current );
 		}
 
-		private function checked( $haystack, $current ) {
+
+		/**
+		 *
+		 *
+		 * @param unknown $haystack
+		 * @param unknown $current
+		 */
+		private function checked( $haystack, $current )
+		{
 
 			if ( is_array( $haystack ) && !empty( $haystack[$current] ) ) {
 				$current = $haystack = 1;
 			}
 
-			checked($haystack, $current);
+			checked( $haystack, $current );
 		}
 
 
 		/**
 		 * Format a tooltip given a string
 		 *
-		 * @param string $tip
+		 * @param string  $tip
 		 * @return string
 		 */
 		private function get_formatted_tip( $tip )
@@ -307,11 +324,19 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 			return $tip ? sprintf( '<a href="#" title="%s" class="sf-tips" tabindex="99"></a>', $tip ) : '';
 		}
 
+
+		/**
+		 *
+		 *
+		 * @param unknown $value
+		 * @param unknown $setting
+		 * @return unknown
+		 */
 		private function sanitize_value( $value, $setting )
 		{
 			if ( $value !== false && $setting['type'] == 'wysiwyg' ) {
 				if ( is_array( $value ) ) {
-					foreach ($value as $key => $output) {
+					foreach ( $value as $key => $output ) {
 						$value[$key] = esc_attr( $output );
 					}
 				} else {
@@ -322,6 +347,8 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 			return apply_filters( $this->id . '_options_sanitize_value', $value, $setting );
 		}
 
+
 	}
+
 
 }

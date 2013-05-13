@@ -57,6 +57,7 @@ if ( ! class_exists( 'SF_Sanitize' ) ) {
 			return $output;
 		}
 
+
 		/**
 		 * WYSIWYG sanitization
 		 *
@@ -68,21 +69,23 @@ if ( ! class_exists( 'SF_Sanitize' ) ) {
 			return $input;
 		}
 
+
 		/**
 		 * Checkbox sanitization
 		 *
 		 * @param int     $input
+		 * @param unknown $option
 		 * @return int
 		 */
 		public function sanitize_checkbox( $input, $option )
 		{
-			if ( !empty($option['multiple']) ) {
+			if ( !empty( $option['multiple'] ) ) {
 
 				$defaults = array_keys( $option['options'] );
 
 				foreach ( $defaults as $value ) {
 
-					if ( !is_array($input) ) {
+					if ( !is_array( $input ) ) {
 						$output[$value] = 0;
 					} else {
 						$output[$value] = in_array( $value, $input ) ? 1 : 0;
@@ -90,7 +93,7 @@ if ( ! class_exists( 'SF_Sanitize' ) ) {
 
 				}
 
-				$output = serialize($output);
+				$output = serialize( $output );
 			} else {
 				$output = $input ? 1 : 0;
 			}
@@ -111,13 +114,13 @@ if ( ! class_exists( 'SF_Sanitize' ) ) {
 			$output = $input;
 
 			if ( is_array( $input ) ) {
-				foreach ($input as $value) {
+				foreach ( $input as $value ) {
 					if ( !$this->sanitize_enum( $value, $option ) ) {
 						$output = false;
 						break;
 					}
 				}
-				$output = $output ? serialize($output) : $output;
+				$output = $output ? serialize( $output ) : $output;
 			} else {
 				$output = array_key_exists( $input, $option['options'] ) ? $input : false;
 			}
