@@ -54,16 +54,7 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 
 			$setting['value'] = $this->get_option( $setting['id'] );
 			$setting['value'] = $setting['value'] !== false ? maybe_unserialize( $setting['value'] ) : false;
-
-			// Sanitize the value
-			if ( is_array($setting['value']) ) {
-				foreach ($setting['value'] as $key => $output) {
-					if ($setting['type'] != 'wysiwyg')
-						$setting['value'][$key] = esc_attr($output);
-				}
-			} else if ( $setting['value'] !== false && $setting['type'] != 'wysiwyg') {
-				$setting['value'] = esc_attr($setting['value']);
-			}
+			$setting['value'] = SF_Format_Options::sanitize_value( $setting['value'], $setting );
 
 			$setting['title'] = $setting['name'];
 			$setting['name']  = $this->id . "_options[{$setting['id']}]";
@@ -316,8 +307,21 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 			return $tip ? sprintf( '<a href="#" title="%s" class="sf-tips" tabindex="99"></a>', $tip ) : '';
 		}
 
+		private function sanitize_value( $value, $setting )
+		{
+			if ( $value !== false && $setting['type'] == 'wysiwyg' ) {
+				if ( is_array( $value ) ) {
+					foreach ($value as $key => $output) {
+						$value[$key] = esc_attr( $output );
+					}
+				} else {
+					$value = esc_attr( $value );
+				}
+			}
+
+			return apply_filters( $this->id . '_options_sanitize_value', $value, $setting );
+		}
 
 	}
-
 
 }
