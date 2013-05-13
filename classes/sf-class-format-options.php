@@ -24,7 +24,7 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 		{
 			if ( empty( $setting ) ) return false;
 
-			$defaults = array(
+			$defaults = apply_filters( $this->id . '_options_defaults', array(
 				'name'        => '',
 				'desc'        => '',
 				'placeholder' => '',
@@ -39,10 +39,10 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 				'options'     => array(),
 				'restrict'    => array(),
 				'settings'	  => array()
-			);
+			) );
 
-			/* Each to it's own variable for slim-ness' sakes. */
-			extract( shortcode_atts( $defaults, $setting ) );
+			// Each to it's own variable for slim-ness' sakes.
+			$setting = shortcode_atts( $defaults, $setting );
 
 			$restrict_defaults = array(
 				'min'  => 0,
@@ -50,31 +50,34 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 				'step' => 'any',
 			);
 
-			$restrict = shortcode_atts( $restrict_defaults, $restrict );
+			$setting['restrict'] = shortcode_atts( $restrict_defaults, $setting['restrict'] );
 
-			$value   = $this->get_option( $id );
-			$value   = $value !== false ? maybe_unserialize( $value ) : false;
-
+			$setting['value'] = $this->get_option( $setting['id'] );
+			$setting['value'] = $setting['value'] !== false ? maybe_unserialize( $setting['value'] ) : false;
 
 			// Sanitize the value
-			if ( is_array($value)) {
-				foreach ($value as $key => $output) {
-					if ($type != 'wysiwyg')
-						$value[$key] = esc_attr($output);
+			if ( is_array($setting['value']) ) {
+				foreach ($setting['value'] as $key => $output) {
+					if ($setting['type'] != 'wysiwyg')
+						$setting['value'][$key] = esc_attr($output);
 				}
-			} else if ( $value !== false && $type != 'wysiwyg') { $value = esc_attr($value); }
+			} else if ( $setting['value'] !== false && $setting['type'] != 'wysiwyg') {
+				$setting['value'] = esc_attr($setting['value']);
+			}
 
-			$title   = $name;
-			$name    = $this->id . "_options[{$id}]";
+			$setting['title'] = $setting['name'];
+			$setting['name']  = $this->id . "_options[{$setting['id']}]";
 
-			$grouped = !$title ? ' style="padding-top:0px;"' : '';
-			$tip     = SF_Format_Options::get_formatted_tip( $tip );
+			$setting['grouped'] = !$setting['title'] ? ' style="padding-top:0px;"' : '';
+			$setting['tip'] = SF_Format_Options::get_formatted_tip( $setting['tip'] );
+
+			$header_types = apply_filters( $this->id . '_options_header_types', array( 'heading', 'title' ) );
+
+			extract( $setting );
 
 			$description = $desc && !$grouped && $type != 'checkbox'
 				? '<br /><small>' . $desc . '</small>'
 				: '<label for="' . $id . '"> ' .$desc . '</label>';
-
-			$header_types = apply_filters( $this->id . '_options_header_types', array( 'heading', 'title' ) );
 
 			$description = ( ( in_array($type, $header_types) || $type == 'radio' ) && !empty( $desc ) )
 				? '<p>' . $desc . '</p>'
@@ -207,8 +210,6 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 			echo str_replace("'>", "'><option></option>", wp_dropdown_pages( $args ));
 
 			echo $description;
-			?><script type="text/javascript">jQuery(function() {jQuery("#<?php echo $id; ?>").select2({ allowClear: true, placeholder: "<?php _e('Select a page...', 'geczy'); ?>", width: '350px' });});</script><?php
- 			break;
 
 			if ( $select2 ) : ?>
 				<script type="text/javascript">jQuery(function() {jQuery("#<?php echo $id; ?>").select2({ allowClear: true, placeholder: "<?php _e('Select a page...', 'geczy'); ?>", width: '350px' });});</script>
@@ -251,11 +252,15 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 					<?php echo $description;
 			break;
 
-		case 'wysiwyg': 
-		
+		case 'wysiwyg':
+
 			$settings['textarea_name'] = $name; // Must at least have the textarea_name set for values to be saved
 			wp_editor( $value, $id, $settings );
 			echo $description;
+			break;
+
+		default :
+			do_action( $this->id . '_options_type_' . $type, $setting );
 			break;
 
 		endswitch;
