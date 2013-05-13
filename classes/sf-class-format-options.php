@@ -253,9 +253,7 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 			break;
 
 		case 'wysiwyg':
-
-			$settings['textarea_name'] = $name; // Must at least have the textarea_name set for values to be saved
-			wp_editor( $value, $id, $settings );
+			wp_editor( $value, $id, array( 'textarea_name' => $name ) );
 			echo $description;
 			break;
 
