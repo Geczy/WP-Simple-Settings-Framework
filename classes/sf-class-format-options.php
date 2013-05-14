@@ -334,7 +334,7 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 		 */
 		private function sanitize_value( $value, $setting )
 		{
-			if ( $value !== false && $setting['type'] == 'wysiwyg' ) {
+			if ( $value !== false && $setting['type'] != 'wysiwyg' ) {
 				if ( is_array( $value ) ) {
 					foreach ( $value as $key => $output ) {
 						$value[$key] = esc_attr( $output );
