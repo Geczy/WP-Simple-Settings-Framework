@@ -110,7 +110,7 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 				if ( $type == 'color' ) {
 					$type = 'text';
 					$class .= ' colorpick';
-					$description .= '<div id="colorPickerDiv_' . esc_attr( $value['id'] ) . '" class="colorpickdiv" style="z-index: 100;background:#eee;border:1px solid #ccc;position:absolute;display:none;"></div>';
+					$description .= '<div id="colorPickerDiv_' . $id . '" class="colorpickdiv" style="z-index: 100;background:#eee;border:1px solid #ccc;position:absolute;display:none;"></div>';
 				}
 ?>
 			<input name="<?php echo $name; ?>"
@@ -254,24 +254,6 @@ if ( ! class_exists( 'SF_Format_Options' ) ) {
 			break;
 
 			endswitch;
-
-?>
-		<script type="text/javascript">
-		jQuery(window).load(function() {
-			// Color picker
-			jQuery('.colorpick').each(function(){
-				jQuery('.colorpickdiv', jQuery(this).parent()).farbtastic(this);
-				jQuery(this).click(function() {
-					if ( jQuery(this).val() == "" ) jQuery(this).val('#');
-					jQuery('.colorpickdiv', jQuery(this).parent() ).show();
-				});
-			});
-			jQuery(document).mousedown(function(){
-				jQuery('.colorpickdiv').hide();
-			});
-		})
-		</script>
-		<?php
 
 			/* Footer of the option. */
 			if ( !in_array( $type, $header_types ) ) echo '</td></tr>';
