@@ -85,6 +85,6 @@ $options[] = array(
 $options[] = array(
 	'name' => __( 'Colorpicker', 'geczy' ),
 	'desc' => __( 'Is this Colorpicker awesome or what?', 'geczy' ),
-	'id'   => 'colorpicker_samplexx',
+	'id'   => 'colorpicker_sample',
 	'type' => 'color',
 );
