@@ -200,14 +200,24 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 		 */
 		public function admin_print_scripts()
 		{
+			global $wp_version;
+
+			//Check wp version and load appropriate scripts for colorpicker.
+			if ( 3.5 <= $wp_version ) {
+				wp_enqueue_style( 'wp-color-picker' );
+				wp_enqueue_script( 'wp-color-picker' );
+			} else {
+				wp_enqueue_style( 'farbtastic' );
+				wp_enqueue_script( 'farbtastic' );
+			}
+
 			wp_enqueue_script( 'bootstrap-tooltip' );
 			wp_enqueue_script( 'select2' );
 			wp_enqueue_script( 'sf-scripts' );
-			wp_enqueue_script( 'farbtastic' );
 
+			wp_enqueue_style( 'wp-color-picker' );
 			wp_enqueue_style( 'select2' );
 			wp_enqueue_style( 'sf-styles' );
-			wp_enqueue_style( 'farbtastic' );
 		}
 
 
