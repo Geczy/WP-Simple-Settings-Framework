@@ -225,7 +225,7 @@ if ( ! class_exists( 'SF_Settings_API' ) ) {
 		 */
 		public function create_menu()
 		{
-			$page = add_submenu_page( $this->menu, $this->title, $this->title, 'manage_options', $this->id, array( &$this, 'init_settings_page' ) );
+			$page = add_submenu_page( $this->menu, $this->title, $this->title, apply_filters( $this->id . '_manage_options', 'manage_options' ), $this->id, array( &$this, 'init_settings_page' ) );
 			add_action( 'admin_print_scripts-' . $page, array( &$this, 'admin_print_scripts' ) );
 		}
 
